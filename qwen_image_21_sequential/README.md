@@ -37,6 +37,11 @@ One command: rents the pod, runs the pipeline, downloads the image, metrics and
 log into `--out`, and terminates the pod. Other GPUs work the same way — pass
 any `gpuTypeId` RunPod accepts (`NVIDIA GeForce RTX 5090`, `NVIDIA RTX A5000`, …).
 
+`--cloud` defaults to `COMMUNITY`, which is roughly half the price of `SECURE`
+(a 3090 is $0.22/hr against $0.50) at the cost of flakier hosts — which is what
+the boot timeout and host rotation are there to absorb. Pass `--cloud SECURE` or
+`--cloud ALL` if community has no capacity for the GPU you asked for.
+
 Knobs, all environment variables read by `run_all.sh`: `HEIGHT`, `WIDTH` (must be
 multiples of 32), `STEPS`, `SEED`. The prompt is `prompt.txt`.
 
@@ -44,7 +49,7 @@ multiples of 32), `STEPS`, `SEED`. The prompt is `prompt.txt`.
 
 | Command | What it does |
 |---|---|
-| `deploy.py create --gpu NAME` | rent a pod and start the run, leave it up |
+| `deploy.py create --gpu NAME [--cloud C]` | rent a pod and start the run, leave it up |
 | `deploy.py status` | pod state, cost so far, tail of the run log |
 | `deploy.py log` | the whole run log |
 | `deploy.py pull DIR` | download artifacts and metrics |

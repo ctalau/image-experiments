@@ -2,7 +2,7 @@
 """Rent a RunPod GPU, run the sequential Qwen-Image-2.1 pipeline, collect the
 results, and terminate the pod.
 
-  deploy.py run [--gpu NAME] [--out DIR]   one command, end to end (use this)
+  deploy.py run [--gpu NAME] [--cloud C] [--out DIR]   end to end (use this)
   deploy.py create [--gpu NAME]            rent a pod and start the run
   deploy.py status                         pod state + tail of the run log
   deploy.py log                            the whole run log
@@ -90,7 +90,7 @@ def gql(query, variables=None):
     return out["data"]
 
 
-def deploy(gpu_type):
+def deploy(gpu_type, cloud="COMMUNITY"):
     pod = gql(
         """
         mutation ($input: PodFindAndDeployOnDemandInput!) {
@@ -102,7 +102,7 @@ def deploy(gpu_type):
         """,
         {
             "input": {
-                "cloudType": "ALL",
+                "cloudType": cloud,
                 "gpuCount": 1,
                 "gpuTypeId": gpu_type,
                 "name": POD_NAME,
@@ -118,8 +118,12 @@ def deploy(gpu_type):
         },
     )["podFindAndDeployOnDemand"]
     if not pod:
-        raise SystemExit(f"RunPod had no capacity for {gpu_type!r}")
+        raise SystemExit(
+            f"RunPod had no {cloud} capacity for {gpu_type!r}; "
+            f"try --cloud SECURE or --cloud ALL"
+        )
     pod["gpu_type"] = gpu_type
+    pod["cloud"] = cloud
     pod["started_at"] = time.time()
     pod["base_url"] = f"https://{pod['id']}-8000.proxy.runpod.net"
     _live.add(pod["id"])
@@ -191,11 +195,13 @@ def load_state():
 # --------------------------------------------------------------------------
 def cmd_run(args):
     for attempt in range(1, args.attempts + 1):
-        print(f"\n=== attempt {attempt}/{args.attempts} on {args.gpu} ===", flush=True)
-        pod = deploy(args.gpu)
+        print(f"\n=== attempt {attempt}/{args.attempts}: {args.gpu} "
+              f"on the {args.cloud.lower()} cloud ===", flush=True)
+        pod = deploy(args.gpu, args.cloud)
         pod["out"] = args.out
         print(f"pod {pod['id']} on {pod['machine']['gpuDisplayName']} "
-              f"(machine {pod['machineId']}) at ${pod['costPerHr']}/hr")
+              f"({args.cloud.lower()} cloud, machine {pod['machineId']}) "
+              f"at ${pod['costPerHr']}/hr")
         print(f"log: {pod['base_url']}/run.log")
         try:
             outcome = watch(pod)
@@ -254,7 +260,7 @@ def pull(base, dest):
 
 
 def cmd_create(args):
-    pod = deploy(args.gpu)
+    pod = deploy(args.gpu, args.cloud)
     _live.discard(pod["id"])             # `create` deliberately leaves it running
     print(json.dumps(pod, indent=2))
     return 0
@@ -303,15 +309,20 @@ def main():
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
 
-    p = sub.add_parser("run")
-    p.add_argument("--gpu", default=os.environ.get("GPU_TYPE", DEFAULT_GPU))
+    def gpu_args(p):
+        p.add_argument("--gpu", default=os.environ.get("GPU_TYPE", DEFAULT_GPU))
+        # Community hosts are roughly half the price and rather less reliable,
+        # which is what the boot timeout and host rotation are for.
+        p.add_argument("--cloud", default=os.environ.get("CLOUD_TYPE", "COMMUNITY"),
+                       choices=["COMMUNITY", "SECURE", "ALL"])
+        return p
+
+    p = gpu_args(sub.add_parser("run"))
     p.add_argument("--out", default="results")
-    p.add_argument("--attempts", type=int, default=3)
+    p.add_argument("--attempts", type=int, default=4)
     p.set_defaults(fn=cmd_run)
 
-    p = sub.add_parser("create")
-    p.add_argument("--gpu", default=os.environ.get("GPU_TYPE", DEFAULT_GPU))
-    p.set_defaults(fn=cmd_create)
+    gpu_args(sub.add_parser("create")).set_defaults(fn=cmd_create)
 
     sub.add_parser("status").set_defaults(fn=cmd_status)
     sub.add_parser("log").set_defaults(fn=cmd_log)
