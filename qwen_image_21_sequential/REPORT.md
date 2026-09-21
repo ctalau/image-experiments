@@ -1,11 +1,16 @@
-# Qwen-Image-2.1 on a single 32 GB GPU, run stage by stage
+# Qwen-Image-2.1 on one consumer GPU, run stage by stage
 
-Running [Qwen-Image-2.1](https://github.com/QwenLM/Qwen-Image-2.1) text-to-image on one
-RunPod RTX 5090 (32 GB), with the three weight blocks — the Qwen3-VL text encoder, the
-DiT, and the VAE — executed as **three separate processes** that hand each other tensors
-on disk, so only one block is on the GPU at a time.
+Running [Qwen-Image-2.1](https://github.com/QwenLM/Qwen-Image-2.1) text-to-image on a
+single RunPod GPU, with the three weight blocks — the Qwen3-VL text encoder, the DiT,
+and the VAE — executed as **three separate processes** that hand each other tensors on
+disk, so only one block is on the GPU at a time.
 
 Target: a 512×512 image from a pre-expanded prompt for *"swiss army knife penguin"*.
+
+Two runs: an **RTX 5090 (32 GB)** first, then an **RTX 3090 (24 GB)** on the community
+cloud, where the split stops being an optimisation and becomes the only way to run the
+model at all. The 3090 run is in [`results_3090/`](results_3090/), the 5090 run in
+[`results/`](results/); [`README.md`](README.md) documents the tooling.
 
 ## The image
 
@@ -31,11 +36,11 @@ that many but merges the screwdriver and can opener into indistinct steel.
 | VAE | `AutoencoderKLQwenImage21` | 0.34 B | 644 MB |
 | **Total** | | **16.22 B** | **30 937 MB** |
 
-Usable VRAM on the card is 32 109 MB (nvidia-smi reports 32 607 MiB installed). So the
-weights do fit, with 1 172 MB to spare — and that is the whole problem, which the control
-run below makes concrete.
+On a 24 GB card that is simply too much. On a 32 GB card it fits, with 1 172 MB to
+spare against 32 109 MB usable — and that is the whole problem: the two control runs
+below show it loading and then having nowhere to compute.
 
-## Results
+## The RTX 5090 (32 GB)
 
 ### Environment
 
@@ -145,6 +150,86 @@ spatial compression) × 64 channels — 128 KB that expands to a 512×512 image,
 *expansion* into PNG rather than a compression, since a 128 KB latent is a denser
 representation than the PNG of what it decodes to.
 
+## The RTX 3090 (24 GB)
+
+![Swiss Army knife penguin, RTX 3090](results_3090/image_rgb.png)
+
+*Same prompt, same seed, same 40 steps — rendered on a 24 GB card the model cannot be
+loaded onto whole. Visually indistinguishable from the 5090 output; the PNGs differ
+bit-for-bit, as reduced-precision kernels on two architectures always will.*
+
+Ran first try, in **20 minutes wall for $0.07**, on a community RTX 3090 at $0.22/hr.
+
+### It fits, and the control proves it has to
+
+| Stage | weights | peak device used | of 24 124 MB | activation overhead |
+|---|---:|---:|---:|---:|
+| `vl` | 16 722 | **17 713** | 73% | 991 |
+| `dit` | 13 571 | 14 545 | 60% | 974 |
+| `vae` | 644 | 2 833 | 12% | 2 189 |
+| `fit` (control) | 30 937 | 22 609 | — | **OOM** |
+
+The control run is the clean result the 5090 could not give. There, all three blocks
+loaded and left 618 MB free — too little to run, but it did load. Here it dies mid-load:
+
+```
+OutOfMemoryError: CUDA out of memory. Tried to allocate 32.00 MiB.
+GPU 0 has a total capacity of 23.56 GiB of which 11.06 MiB is free.
+```
+
+Thirty-two mebibytes, with eleven free. On a 24 GB card the process split is not a
+tuning choice — it is the difference between running the model and not.
+
+### Latency, against the 5090
+
+| | RTX 3090 | RTX 5090 |
+|---|---:|---:|
+| Usable VRAM | 24 124 MB | 32 109 MB |
+| Compute capability | sm_86 (Ampere) | sm_120 (Blackwell) |
+| Container | `pytorch/pytorch:2.13.0-cuda12.6` | `runpod/pytorch:…-cu1281-torch2130` |
+| Price | $0.22/hr (community) | $0.99/hr (secure) |
+| Checkpoint download | 296 s @ **106.6 MB/s** | 2 190 s @ 14.4 MB/s |
+| Python import × 3 | **11.0 s** | 39.2 s |
+| Read safetensors × 3 | **1.7 s** | 18.5 s |
+| Host → GPU × 3 | **6.0 s** | 16.8 s |
+| Model compute | 13.2 s | **9.9 s** |
+| **Three-stage wall** | **32.3 s** | 85.5 s |
+| Overhead / compute | **1.4×** | 7.6× |
+| Cost of the run | **$0.07** | $0.72 |
+
+The 3090 finished the pipeline in **38% of the 5090's wall time while being the slower
+card**, because almost everything outside the DiT loop was the host and the container
+rather than the GPU: a 3.6 GB image instead of 11.3 GB, a host with 7× the download
+bandwidth, and a faster disk.
+
+### Where the 5090 actually wins
+
+Only one number here is close to a like-for-like GPU comparison — the DiT's steady-state
+step time, which is the same code on the same torch 2.13.0 doing the same work 40 times:
+
+| DiT, 40 steps @ 512×512 | RTX 3090 | RTX 5090 |
+|---|---:|---:|
+| First step | 0.720 s | 1.043 s |
+| Median step | **0.283 s** | **0.107 s** |
+| First ÷ median | 2.5× | 9.7× |
+| Total denoise | 11.75 s | 5.85 s |
+
+The 5090 is **2.64× faster per step**, which is the ordering the hardware predicts. But
+look at the first step: the 5090 spends **0.936 s** above its median on step one against
+the 3090's 0.437 s — the faster card pays twice the absolute warm-up. Part of that is
+algorithmic and identical on both (the text KV-cache prefill that `causal_condition`
+makes possible), so the extra is most likely PTX JIT: the cu129 build almost certainly
+ships no sm_120 cubins, so every kernel compiles on first launch.
+
+That also explains the two stages where the slower card beat the faster one — VL encode
+1.21 s against 2.80 s, VAE decode 0.28 s against 1.25 s. Both are **one-shot**: they
+launch each kernel once and pay warm-up in full, with no loop to amortise it over. The
+DiT runs 40 iterations and buries it.
+
+Caveat: the two runs differ in GPU, container image and host at once, so only the
+steady-state step time above should be read as a GPU-to-GPU result. The rest is a
+statement about how much of a short pipeline run is not the GPU.
+
 ## How it works
 
 `run_stage.py` runs one stage per invocation. The split relies on diffusers skipping any
@@ -176,7 +261,7 @@ Files:
 
 ## What went wrong
 
-Five pods were rented before one produced the image.
+### RTX 5090 — five pods, by hand
 
 1. **Multi-line container start command** (`$0.36`, 32 min). RunPod stores `dockerArgs`
    verbatim, and a value containing newlines leaves the container unable to start — no
@@ -196,20 +281,53 @@ Five pods were rented before one produced the image.
    on the same machine, which then started in under a minute from its warm layer cache.
 5. **Success** (`$0.72`, 43 min — 36 of them downloading weights).
 
-Total GPU spend: **$1.49**. The successful run's useful work was 85 s.
+Subtotal: **$1.49**.
+
+### RTX 3090 — one command, nine pods, mostly automatic
+
+The 3090 run used the hardened `deploy.py run`, which rents, watches, collects and
+terminates on its own. Nine pods went by; only the first two failure *classes* needed me.
+
+| | Pods | Cost | Handled by |
+|---|---:|---:|---|
+| Secure host (before switching to community) | 1 | $0.02 | — |
+| Boot timeout, 11.3 GB image never pulled | 2 | $0.08 | `BOOT_TIMEOUT` + rotation |
+| Landed on a known-bad machine | 3 | $0.01 | machine blacklist, released in seconds |
+| GPU passthrough broken (`CUDA unknown error`) | 1 | $0.01 | CUDA preflight → `FAILED:cuda` |
+| PEP 668 blocked every `pip install` | 1 | $0.01 | code fix, then fatal + verified |
+| **Success** | 1 | **$0.07** | — |
+
+Two of those became permanent fixes rather than incidents: the 3.6 GB base image (which
+also removed the error-804 trap outright) and the persistent bad-machine list. The
+`SUPPLY_CONSTRAINT` wait and the PEP 668 flag were the remaining code fixes.
+
+Subtotal: **$0.20**. Grand total across both cards: **$1.69**.
 
 ## Takeaways
 
-- Qwen-Image-2.1's three blocks total 30.9 GB in bf16 and *technically* fit on a 32 GB
-  card, but with only 618 MB of headroom — not enough to run. A stage-per-process split
-  brings peak VRAM down to 17.6 GB, 55% of the card, leaving room for 2K generation.
-- The split is nearly free in bytes moved: 5.1 MB of intermediate tensors versus 31.6 GB
-  of weights.
-- It is not free in time. At 512×512 the fixed cost (imports, safetensors reads,
-  host→device copies) is 75 s against 9.9 s of compute — a 7.6× overhead. That ratio
-  collapses at the resolution the model is built for: 2048×2048 is 16× the latent tokens,
-  so DiT compute alone would go from ~6 s to at least a minute and a half — more, since
-  attention over image tokens is quadratic — while the overhead stays flat.
+- **On 24 GB the split is mandatory.** The three blocks are 30.9 GB in bf16; loading
+  them together on a 3090 dies trying to allocate 32 MiB with 11 MiB free. Per-stage
+  peak is 17.7 GB, 73% of the card.
+- **On 32 GB it is still necessary, more insidiously.** They load, leaving 618 MB — less
+  than any stage's activation working set (991 MB / 974 MB / 2 189 MB), so a monolithic
+  run OOMs on the first forward pass instead of at load.
+- **The split is nearly free in bytes moved**: 5.1 MB of intermediate tensors against
+  31.6 GB of weights.
+- **Most of a short run is not the GPU.** On the 5090 the fixed cost was 75.6 s against
+  9.9 s of compute (7.6×); on the 3090, with a 3× smaller image and a faster host, the
+  same fixed cost was 19.0 s against 13.2 s (1.4×). Same code, same split — the
+  difference is the container and the machine.
+- **A slower card can finish sooner.** The 3090 is 2.64× slower per DiT step and still
+  completed the pipeline in 38% of the 5090's wall time, at a tenth of the cost.
+- **One-shot kernels punish new architectures.** The 5090 lost VL encode (2.80 s vs
+  1.21 s) and VAE decode (1.25 s vs 0.28 s) to the 3090, and spent 0.936 s above median
+  on its first DiT step against the 3090's 0.437 s — consistent with the cu129 build
+  shipping no sm_120 cubins and PTX-JITing each kernel on first launch. Only the 40-step
+  DiT loop runs long enough to amortise it.
+- **Scale changes the arithmetic.** 2048×2048 is 16× the latent tokens, so DiT compute
+  goes from ~6–12 s to minutes — more, since attention over image tokens is quadratic —
+  while the overhead stays flat. The split gets cheaper the closer you run to the
+  resolution the model was built for.
 - Use this for batch work, where the fixed cost amortises across many prompts per stage.
-  For one-off interactive generation on a too-small card, `enable_model_cpu_offload()`
-  is the better trade.
+  For one-off interactive generation, `enable_model_cpu_offload()` is the simpler trade
+  — but only on a card where all three blocks fit in host RAM *and* one fits in VRAM.
