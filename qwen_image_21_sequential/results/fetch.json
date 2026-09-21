@@ -1,0 +1,17 @@
+{
+  "stage": "fetch",
+  "model_id": "Qwen/Qwen-Image-2.1",
+  "latency_s": {
+    "download": 2190.083,
+    "total": 2190.085
+  },
+  "checkpoint_size_mb": {
+    "text_encoder": 16722.1,
+    "transformer": 13571.1,
+    "vae": 1288.4,
+    "processor": 15.1,
+    "scheduler": 0.0,
+    "TOTAL": 31596.7
+  },
+  "download_mb_per_s": 14.4
+}

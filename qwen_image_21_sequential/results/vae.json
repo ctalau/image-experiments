@@ -1,0 +1,86 @@
+{
+  "stage": "vae",
+  "latency_s": {
+    "import": 16.656,
+    "load_latents": 0.134,
+    "load_cpu": 11.057,
+    "to_gpu": 1.06,
+    "decode": 1.247,
+    "save": 0.514,
+    "total": 30.67
+  },
+  "gpu": {
+    "name": "NVIDIA GeForce RTX 5090",
+    "total_mb": 32109.1,
+    "peak_device_used_mb": 3359.2,
+    "torch_peak_allocated_mb": 2332.3,
+    "torch_peak_reserved_mb": 2758.0
+  },
+  "host": {
+    "peak_rss_mb": 2750.2,
+    "ru_maxrss_mb": 2373.1,
+    "total_ram_gb": 1003.63
+  },
+  "vae": {
+    "class": "AutoencoderKLQwenImage21",
+    "params": 337740404,
+    "params_billions": 0.338,
+    "param_bytes_mb": 644.2,
+    "buffer_bytes_mb": 0.0,
+    "dtypes": [
+      "torch.bfloat16"
+    ]
+  },
+  "inputs": {
+    "packed_latents": {
+      "shape": [
+        1,
+        1024,
+        64
+      ],
+      "dtype": "torch.bfloat16",
+      "elements": 65536,
+      "bytes_mb": 0.125
+    },
+    "unpacked_latents": {
+      "shape": [
+        1,
+        64,
+        1,
+        32,
+        32
+      ],
+      "dtype": "torch.bfloat16",
+      "elements": 65536,
+      "bytes_mb": 0.125
+    }
+  },
+  "outputs": {
+    "decoded_tensor": {
+      "shape": [
+        1,
+        4,
+        512,
+        512
+      ],
+      "dtype": "torch.bfloat16",
+      "elements": 1048576,
+      "bytes_mb": 2.0
+    },
+    "image_mode": "RGBA",
+    "image_size": [
+      512,
+      512
+    ],
+    "alpha_min": 252
+  },
+  "artifact": {
+    "path": "/workspace/out/artifacts/image.png",
+    "size_mb": 0.307
+  },
+  "artifact_flat": {
+    "path": "/workspace/out/artifacts/image_rgb.png",
+    "size_mb": 0.269
+  },
+  "compression_ratio_latent_to_png": 0.407
+}

@@ -1,0 +1,325 @@
+{
+  "dit": {
+    "stage": "dit",
+    "latency_s": {
+      "import": 11.487,
+      "load_embeds": 0.413,
+      "load_cpu": 3.284,
+      "to_gpu": 7.674,
+      "denoise": 5.846,
+      "save": 0.002,
+      "total": 28.706
+    },
+    "gpu": {
+      "name": "NVIDIA GeForce RTX 5090",
+      "total_mb": 32109.1,
+      "peak_device_used_mb": 14855.2,
+      "torch_peak_allocated_mb": 14171.9,
+      "torch_peak_reserved_mb": 14254.0
+    },
+    "host": {
+      "peak_rss_mb": 10332.2,
+      "ru_maxrss_mb": 10469.1,
+      "total_ram_gb": 1003.63
+    },
+    "resolution": {
+      "height": 512,
+      "width": 512
+    },
+    "num_inference_steps": 40,
+    "seed": 42,
+    "transformer": {
+      "class": "QwenImage21Transformer2DModel",
+      "params": 7115124736,
+      "params_billions": 7.115,
+      "param_bytes_mb": 13571.0,
+      "buffer_bytes_mb": 0.0,
+      "dtypes": [
+        "torch.bfloat16"
+      ]
+    },
+    "inputs": {
+      "prompt_embeds": {
+        "shape": [
+          1,
+          637,
+          4096
+        ],
+        "dtype": "torch.bfloat16",
+        "elements": 2609152,
+        "bytes_mb": 4.977
+      }
+    },
+    "outputs": {
+      "latents": {
+        "shape": [
+          1,
+          1024,
+          64
+        ],
+        "dtype": "torch.bfloat16",
+        "elements": 65536,
+        "bytes_mb": 0.125
+      }
+    },
+    "per_step_s": {
+      "first": 1.0432,
+      "median": 0.1072,
+      "mean": 0.146,
+      "all": [
+        1.0432,
+        0.1024,
+        0.0994,
+        0.0989,
+        0.0996,
+        0.0989,
+        0.1006,
+        0.114,
+        0.1863,
+        0.1156,
+        0.1378,
+        0.1149,
+        0.1046,
+        0.1044,
+        0.1031,
+        0.1041,
+        0.1031,
+        0.1467,
+        0.1216,
+        0.1019,
+        0.1062,
+        0.1004,
+        0.1061,
+        0.1022,
+        0.1051,
+        0.139,
+        0.1385,
+        0.1125,
+        0.1072,
+        0.1031,
+        0.1289,
+        0.1503,
+        0.1002,
+        0.1705,
+        0.1491,
+        0.1965,
+        0.1586,
+        0.1999,
+        0.1655,
+        0.0992
+      ]
+    },
+    "artifact": {
+      "path": "/workspace/out/artifacts/latents.pt",
+      "size_mb": 0.127
+    }
+  },
+  "env": {
+    "stage": "env",
+    "torch": "2.13.0+cu129",
+    "cuda": "12.9",
+    "gpu": "NVIDIA GeForce RTX 5090",
+    "gpu_total_gb": 31.36,
+    "capability": [
+      12,
+      0
+    ],
+    "host_ram_gb": 1003.63,
+    "cpu_count": 236,
+    "diffusers": "0.41.0.dev0",
+    "transformers": "5.17.0",
+    "accelerate": "1.15.0",
+    "nvidia_smi": "NVIDIA GeForce RTX 5090, 32607 MiB, 580.159.04"
+  },
+  "fetch": {
+    "stage": "fetch",
+    "model_id": "Qwen/Qwen-Image-2.1",
+    "latency_s": {
+      "download": 2190.083,
+      "total": 2190.085
+    },
+    "checkpoint_size_mb": {
+      "text_encoder": 16722.1,
+      "transformer": 13571.1,
+      "vae": 1288.4,
+      "processor": 15.1,
+      "scheduler": 0.0,
+      "TOTAL": 31596.7
+    },
+    "download_mb_per_s": 14.4
+  },
+  "fit": {
+    "stage": "fit",
+    "latency_s": {
+      "load_cpu": 21.13,
+      "to_gpu": 26.291,
+      "total": 47.486
+    },
+    "gpu": {
+      "name": "NVIDIA GeForce RTX 5090",
+      "total_mb": 32109.1,
+      "peak_device_used_mb": 31491.2,
+      "torch_peak_allocated_mb": 30954.3,
+      "torch_peak_reserved_mb": 31136.0
+    },
+    "host": {
+      "peak_rss_mb": 11134.9,
+      "ru_maxrss_mb": 10731.8,
+      "total_ram_gb": 1003.63
+    },
+    "oom": false,
+    "error": null,
+    "weights_mb": {
+      "text_encoder": 16722.0,
+      "transformer": 13571.0,
+      "vae": 644.2
+    }
+  },
+  "vae": {
+    "stage": "vae",
+    "latency_s": {
+      "import": 16.656,
+      "load_latents": 0.134,
+      "load_cpu": 11.057,
+      "to_gpu": 1.06,
+      "decode": 1.247,
+      "save": 0.514,
+      "total": 30.67
+    },
+    "gpu": {
+      "name": "NVIDIA GeForce RTX 5090",
+      "total_mb": 32109.1,
+      "peak_device_used_mb": 3359.2,
+      "torch_peak_allocated_mb": 2332.3,
+      "torch_peak_reserved_mb": 2758.0
+    },
+    "host": {
+      "peak_rss_mb": 2750.2,
+      "ru_maxrss_mb": 2373.1,
+      "total_ram_gb": 1003.63
+    },
+    "vae": {
+      "class": "AutoencoderKLQwenImage21",
+      "params": 337740404,
+      "params_billions": 0.338,
+      "param_bytes_mb": 644.2,
+      "buffer_bytes_mb": 0.0,
+      "dtypes": [
+        "torch.bfloat16"
+      ]
+    },
+    "inputs": {
+      "packed_latents": {
+        "shape": [
+          1,
+          1024,
+          64
+        ],
+        "dtype": "torch.bfloat16",
+        "elements": 65536,
+        "bytes_mb": 0.125
+      },
+      "unpacked_latents": {
+        "shape": [
+          1,
+          64,
+          1,
+          32,
+          32
+        ],
+        "dtype": "torch.bfloat16",
+        "elements": 65536,
+        "bytes_mb": 0.125
+      }
+    },
+    "outputs": {
+      "decoded_tensor": {
+        "shape": [
+          1,
+          4,
+          512,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "elements": 1048576,
+        "bytes_mb": 2.0
+      },
+      "image_mode": "RGBA",
+      "image_size": [
+        512,
+        512
+      ],
+      "alpha_min": 252
+    },
+    "artifact": {
+      "path": "/workspace/out/artifacts/image.png",
+      "size_mb": 0.307
+    },
+    "artifact_flat": {
+      "path": "/workspace/out/artifacts/image_rgb.png",
+      "size_mb": 0.269
+    },
+    "compression_ratio_latent_to_png": 0.407
+  },
+  "vl": {
+    "stage": "vl",
+    "latency_s": {
+      "import": 11.087,
+      "load_cpu": 4.195,
+      "to_gpu": 8.016,
+      "encode": 2.797,
+      "save": 0.011,
+      "total": 26.11
+    },
+    "gpu": {
+      "name": "NVIDIA GeForce RTX 5090",
+      "total_mb": 32109.1,
+      "peak_device_used_mb": 17579.2,
+      "torch_peak_allocated_mb": 17265.0,
+      "torch_peak_reserved_mb": 17410.0
+    },
+    "host": {
+      "peak_rss_mb": 5562.5,
+      "ru_maxrss_mb": 5721.8,
+      "total_ram_gb": 1003.63
+    },
+    "prompt_chars": 2906,
+    "prompt_words": 504,
+    "text_encoder": {
+      "class": "Qwen3VLForConditionalGeneration",
+      "params": 8767123696,
+      "params_billions": 8.767,
+      "param_bytes_mb": 16722.0,
+      "buffer_bytes_mb": 0.0,
+      "dtypes": [
+        "torch.bfloat16"
+      ]
+    },
+    "outputs": {
+      "prompt_embeds": {
+        "shape": [
+          1,
+          637,
+          4096
+        ],
+        "dtype": "torch.bfloat16",
+        "elements": 2609152,
+        "bytes_mb": 4.977
+      },
+      "prompt_embeds_mask": null,
+      "image_pad_mask": {
+        "shape": [
+          1,
+          637
+        ],
+        "dtype": "torch.bool",
+        "elements": 637,
+        "bytes_mb": 0.001
+      }
+    },
+    "artifact": {
+      "path": "/workspace/out/artifacts/prompt_embeds.pt",
+      "size_mb": 4.979
+    }
+  }
+}

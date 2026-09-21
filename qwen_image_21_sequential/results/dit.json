@@ -1,0 +1,115 @@
+{
+  "stage": "dit",
+  "latency_s": {
+    "import": 11.487,
+    "load_embeds": 0.413,
+    "load_cpu": 3.284,
+    "to_gpu": 7.674,
+    "denoise": 5.846,
+    "save": 0.002,
+    "total": 28.706
+  },
+  "gpu": {
+    "name": "NVIDIA GeForce RTX 5090",
+    "total_mb": 32109.1,
+    "peak_device_used_mb": 14855.2,
+    "torch_peak_allocated_mb": 14171.9,
+    "torch_peak_reserved_mb": 14254.0
+  },
+  "host": {
+    "peak_rss_mb": 10332.2,
+    "ru_maxrss_mb": 10469.1,
+    "total_ram_gb": 1003.63
+  },
+  "resolution": {
+    "height": 512,
+    "width": 512
+  },
+  "num_inference_steps": 40,
+  "seed": 42,
+  "transformer": {
+    "class": "QwenImage21Transformer2DModel",
+    "params": 7115124736,
+    "params_billions": 7.115,
+    "param_bytes_mb": 13571.0,
+    "buffer_bytes_mb": 0.0,
+    "dtypes": [
+      "torch.bfloat16"
+    ]
+  },
+  "inputs": {
+    "prompt_embeds": {
+      "shape": [
+        1,
+        637,
+        4096
+      ],
+      "dtype": "torch.bfloat16",
+      "elements": 2609152,
+      "bytes_mb": 4.977
+    }
+  },
+  "outputs": {
+    "latents": {
+      "shape": [
+        1,
+        1024,
+        64
+      ],
+      "dtype": "torch.bfloat16",
+      "elements": 65536,
+      "bytes_mb": 0.125
+    }
+  },
+  "per_step_s": {
+    "first": 1.0432,
+    "median": 0.1072,
+    "mean": 0.146,
+    "all": [
+      1.0432,
+      0.1024,
+      0.0994,
+      0.0989,
+      0.0996,
+      0.0989,
+      0.1006,
+      0.114,
+      0.1863,
+      0.1156,
+      0.1378,
+      0.1149,
+      0.1046,
+      0.1044,
+      0.1031,
+      0.1041,
+      0.1031,
+      0.1467,
+      0.1216,
+      0.1019,
+      0.1062,
+      0.1004,
+      0.1061,
+      0.1022,
+      0.1051,
+      0.139,
+      0.1385,
+      0.1125,
+      0.1072,
+      0.1031,
+      0.1289,
+      0.1503,
+      0.1002,
+      0.1705,
+      0.1491,
+      0.1965,
+      0.1586,
+      0.1999,
+      0.1655,
+      0.0992
+    ]
+  },
+  "artifact": {
+    "path": "/workspace/out/artifacts/latents.pt",
+    "size_mb": 0.127
+  }
+}
