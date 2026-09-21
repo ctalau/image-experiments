@@ -54,19 +54,19 @@ class GpuSampler(threading.Thread):
         self.period = period
         self.peak_used = 0
         self.total = 0
-        self._stop = threading.Event()
+        self._halt = threading.Event()
 
     def run(self):
         import torch
 
-        while not self._stop.is_set():
+        while not self._halt.is_set():
             free, total = torch.cuda.mem_get_info()
             self.total = total
             self.peak_used = max(self.peak_used, total - free)
-            self._stop.wait(self.period)
+            self._halt.wait(self.period)
 
     def stop(self):
-        self._stop.set()
+        self._halt.set()
         self.join(timeout=2)
 
 
@@ -80,7 +80,7 @@ class HostSampler(threading.Thread):
         super().__init__()
         self.period = period
         self.peak_rss = 0
-        self._stop = threading.Event()
+        self._halt = threading.Event()
 
     def _rss(self):
         try:
@@ -90,12 +90,12 @@ class HostSampler(threading.Thread):
             return 0
 
     def run(self):
-        while not self._stop.is_set():
+        while not self._halt.is_set():
             self.peak_rss = max(self.peak_rss, self._rss())
-            self._stop.wait(self.period)
+            self._halt.wait(self.period)
 
     def stop(self):
-        self._stop.set()
+        self._halt.set()
         self.join(timeout=2)
 
 
