@@ -222,14 +222,29 @@ def load_state():
 # commands
 # --------------------------------------------------------------------------
 def cmd_run(args):
-    for attempt in range(1, args.attempts + 1):
+    # Community hosts fail in ways that are entirely the host's: a GPU the
+    # driver cannot open, an image that never finishes pulling. RunPod's
+    # scheduler is sticky and will hand back the same machine, so remember the
+    # bad ones and drop straight back out of them -- that costs seconds and a
+    # cent, against the ten minutes a boot timeout takes to notice.
+    bad_machines = set()
+    attempt, deploys = 0, 0
+    while attempt < args.attempts and deploys < args.attempts * 4:
+        pod = deploy(args.gpu, args.cloud)
+        deploys += 1
+        machine = pod["machineId"]
+        if machine in bad_machines:
+            print(f"  landed back on known-bad machine {machine}; releasing it")
+            terminate(pod["id"])
+            time.sleep(20)
+            continue
+
+        attempt += 1
+        pod["out"] = args.out
         print(f"\n=== attempt {attempt}/{args.attempts}: {args.gpu} "
               f"on the {args.cloud.lower()} cloud ===", flush=True)
-        pod = deploy(args.gpu, args.cloud)
-        pod["out"] = args.out
         print(f"pod {pod['id']} on {pod['machine']['gpuDisplayName']} "
-              f"({args.cloud.lower()} cloud, machine {pod['machineId']}) "
-              f"at ${pod['costPerHr']}/hr")
+              f"(machine {machine}) at ${pod['costPerHr']}/hr")
         print(f"log: {pod['base_url']}/run.log")
         try:
             outcome = watch(pod)
@@ -242,11 +257,13 @@ def cmd_run(args):
             print(f"\nrun finished; artifacts in {args.out}")
             return 0
         if outcome in ROTATE or outcome == "NO_BOOT":
-            print(f"host-level failure ({outcome}); rotating to another machine")
+            bad_machines.add(machine)
+            print(f"host-level failure ({outcome}) on {machine}; "
+                  f"blacklisted, rotating to another machine")
             continue
         print(f"\nrun failed: {outcome}  (see {args.out}/run.log)")
         return 1
-    print(f"\ngave up after {args.attempts} attempts")
+    print(f"\ngave up after {attempt} attempts on {len(bad_machines)} bad machines")
     return 1
 
 

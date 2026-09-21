@@ -144,12 +144,19 @@ installs land in the same interpreter that runs the stages.
 `_stop()`; shadowing it makes every stage compute correctly and then die in
 teardown with `'Event' object is not callable`.
 
-**5. Community capacity comes and goes.** `podFindAndDeployOnDemand` returns
+**5. Bad community hosts, and a sticky scheduler.** One community 3090 had
+broken GPU passthrough — `nvidia-smi` printed an empty device table and torch
+raised *"CUDA unknown error"*. RunPod then handed back the **same machine** on
+the next request. *Fix:* `run` records the `machineId` of any host that fails at
+host level and immediately releases a pod that lands back on one, which costs a
+few seconds instead of a ten-minute boot timeout.
+
+**6. Community capacity comes and goes.** `podFindAndDeployOnDemand` returns
 `SUPPLY_CONSTRAINT` when no host of that type is free, which is normal on
 community for a popular card. *Fix:* `deploy()` sits through it, retrying every
 45 s for up to 30 minutes (`CAPACITY_WAIT`), instead of failing the run.
 
-**6. The download dominates.** 31.6 GB at 14.4 MB/s unauthenticated was 36 of the
+**7. The download dominates.** 31.6 GB at 14.4 MB/s unauthenticated was 36 of the
 43 minutes of the successful run. Set `HF_TOKEN` in the pod environment if you
 have one; `HF_HUB_ENABLE_HF_TRANSFER=1` and `max_workers=16` are already on.
 
