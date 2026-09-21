@@ -29,24 +29,15 @@ IMAGE = os.environ.get(
 REPO = os.environ.get("REPO_URL", "https://github.com/ctalau/image-experiments")
 BRANCH = os.environ.get("REPO_BRANCH", "claude/qwen-image-runpod-sequential-xr5skn")
 
-# Container entrypoint: clone the experiment, serve /workspace/out read-only,
-# run the pipeline, and stay up afterwards so the results can be collected.
-BOOT = f"""
-set -u
-mkdir -p /workspace/out
-exec > >(tee -a /workspace/out/run.log) 2>&1
-echo boot > /workspace/out/STATUS
-echo "[boot] $(date -u)"
-apt-get update -qq && apt-get install -y -qq git || true
-rm -rf /workspace/repo
-git clone --depth 1 -b {BRANCH} {REPO} /workspace/repo
-cd /workspace/out && nohup python3 -m http.server 8000 --directory /workspace/out \
-    > /workspace/httpd.log 2>&1 &
-sleep 2
-bash /workspace/repo/qwen_image_21_sequential/run_all.sh
-echo "[boot] run_all.sh exited rc=$?"
-sleep infinity
-"""
+# The container start command has to stay on one line with no shell quoting:
+# RunPod stores it verbatim and a multi-line value stops the container from
+# starting at all. Everything else lives in boot.sh inside the repo.
+BOOT = (
+    "bash -c "
+    "'apt-get update -qq; apt-get install -y -qq git; "
+    f"git clone --depth 1 -b {BRANCH} {REPO} /workspace/repo; "
+    "bash /workspace/repo/qwen_image_21_sequential/boot.sh'"
+)
 
 
 def gql(query, variables=None):
@@ -78,7 +69,7 @@ def load_state():
 
 
 def create():
-    docker_args = "bash -lc " + json.dumps(BOOT)
+    docker_args = BOOT
     data = gql(
         """
         mutation ($input: PodFindAndDeployOnDemandInput!) {
@@ -95,10 +86,10 @@ def create():
                 "gpuTypeId": GPU_TYPE,
                 "name": "qwen-image-21-sequential",
                 "imageName": IMAGE,
-                "containerDiskInGb": 150,
+                "containerDiskInGb": 80,
                 "volumeInGb": 0,
                 "minVcpuCount": 8,
-                "minMemoryInGb": 48,
+                "minMemoryInGb": 32,
                 "ports": "8000/http",
                 "dockerArgs": docker_args,
                 "env": [],
