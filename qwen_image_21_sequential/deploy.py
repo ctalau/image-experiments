@@ -65,6 +65,8 @@ ARTIFACTS = ["run.log", "metrics.json", "STATUS",
 BOOT_TIMEOUT = 660      # no STATUS file at all -> the image never finished pulling
 RUN_TIMEOUT = 7200      # DONE never arrives
 POLL = 15
+CAPACITY_WAIT = 1800    # how long to wait out "no instances available"
+CAPACITY_POLL = 45
 
 _live = set()           # pod ids this process created and has not terminated
 
@@ -72,6 +74,16 @@ _live = set()           # pod ids this process created and has not terminated
 # --------------------------------------------------------------------------
 # RunPod API
 # --------------------------------------------------------------------------
+class RunPodError(Exception):
+    def __init__(self, errors):
+        super().__init__(json.dumps(errors, indent=2))
+        self.errors = errors
+
+    @property
+    def codes(self):
+        return {(e.get("extensions") or {}).get("code") for e in self.errors}
+
+
 def gql(query, variables=None):
     body = json.dumps({"query": query, "variables": variables or {}}).encode()
     req = urllib.request.Request(
@@ -86,11 +98,29 @@ def gql(query, variables=None):
     with urllib.request.urlopen(req, timeout=120) as r:
         out = json.load(r)
     if "errors" in out:
-        raise SystemExit(json.dumps(out["errors"], indent=2))
+        raise RunPodError(out["errors"])
     return out["data"]
 
 
-def deploy(gpu_type, cloud="COMMUNITY"):
+def deploy(gpu_type, cloud="COMMUNITY", capacity_wait=CAPACITY_WAIT):
+    """Rent one pod, waiting out transient 'no instances available'.
+
+    Community stock for a given card comes and goes minute to minute, so a
+    SUPPLY_CONSTRAINT is something to sit through, not to fail the run on."""
+    deadline = time.time() + capacity_wait
+    while True:
+        try:
+            return _deploy_once(gpu_type, cloud)
+        except RunPodError as e:
+            if "SUPPLY_CONSTRAINT" not in e.codes or time.time() > deadline:
+                raise
+            left = deadline - time.time()
+            print(f"  no {cloud.lower()} {gpu_type} free; retrying for {left / 60:.0f} more min",
+                  flush=True)
+            time.sleep(CAPACITY_POLL)
+
+
+def _deploy_once(gpu_type, cloud):
     pod = gql(
         """
         mutation ($input: PodFindAndDeployOnDemandInput!) {
@@ -118,10 +148,8 @@ def deploy(gpu_type, cloud="COMMUNITY"):
         },
     )["podFindAndDeployOnDemand"]
     if not pod:
-        raise SystemExit(
-            f"RunPod had no {cloud} capacity for {gpu_type!r}; "
-            f"try --cloud SECURE or --cloud ALL"
-        )
+        raise RunPodError([{"message": f"no {cloud} capacity for {gpu_type!r}",
+                            "extensions": {"code": "SUPPLY_CONSTRAINT"}}])
     pod["gpu_type"] = gpu_type
     pod["cloud"] = cloud
     pod["started_at"] = time.time()
@@ -340,4 +368,7 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except RunPodError as e:
+        raise SystemExit(f"RunPod API error:\n{e}")
