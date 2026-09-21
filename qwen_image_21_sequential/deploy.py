@@ -53,7 +53,12 @@ def gql(query, variables=None):
     body = json.dumps({"query": query, "variables": variables or {}}).encode()
     req = urllib.request.Request(
         API, data=body,
-        headers={"Content-Type": "application/json", "Authorization": f"Bearer {KEY}"},
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {KEY}",
+            # Cloudflare in front of the API rejects the default urllib UA (1010).
+            "User-Agent": "curl/8.5.0",
+        },
     )
     with urllib.request.urlopen(req, timeout=120) as r:
         out = json.load(r)
@@ -122,8 +127,9 @@ def pod_info(pod_id):
 
 
 def fetch(url, timeout=60):
+    req = urllib.request.Request(url, headers={"User-Agent": "curl/8.5.0"})
     try:
-        with urllib.request.urlopen(url, timeout=timeout) as r:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
             return r.read()
     except Exception as e:  # noqa: BLE001
         return f"<{type(e).__name__}: {e}>".encode()
