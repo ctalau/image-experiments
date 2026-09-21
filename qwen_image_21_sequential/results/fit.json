@@ -1,0 +1,27 @@
+{
+  "stage": "fit",
+  "latency_s": {
+    "load_cpu": 21.13,
+    "to_gpu": 26.291,
+    "total": 47.486
+  },
+  "gpu": {
+    "name": "NVIDIA GeForce RTX 5090",
+    "total_mb": 32109.1,
+    "peak_device_used_mb": 31491.2,
+    "torch_peak_allocated_mb": 30954.3,
+    "torch_peak_reserved_mb": 31136.0
+  },
+  "host": {
+    "peak_rss_mb": 11134.9,
+    "ru_maxrss_mb": 10731.8,
+    "total_ram_gb": 1003.63
+  },
+  "oom": false,
+  "error": null,
+  "weights_mb": {
+    "text_encoder": 16722.0,
+    "transformer": 13571.0,
+    "vae": 644.2
+  }
+}

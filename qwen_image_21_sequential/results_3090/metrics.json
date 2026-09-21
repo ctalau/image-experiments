@@ -1,0 +1,320 @@
+{
+  "dit": {
+    "stage": "dit",
+    "latency_s": {
+      "import": 3.733,
+      "load_embeds": 0.137,
+      "load_cpu": 0.493,
+      "to_gpu": 2.43,
+      "denoise": 11.754,
+      "save": 0.001,
+      "total": 18.549
+    },
+    "gpu": {
+      "name": "NVIDIA GeForce RTX 3090",
+      "total_mb": 24124.2,
+      "peak_device_used_mb": 14545.1,
+      "torch_peak_allocated_mb": 14148.0,
+      "torch_peak_reserved_mb": 14222.0
+    },
+    "host": {
+      "peak_rss_mb": 9996.9,
+      "ru_maxrss_mb": 10438.4,
+      "total_ram_gb": 251.49
+    },
+    "resolution": {
+      "height": 512,
+      "width": 512
+    },
+    "num_inference_steps": 40,
+    "seed": 42,
+    "transformer": {
+      "class": "QwenImage21Transformer2DModel",
+      "params": 7115124736,
+      "params_billions": 7.115,
+      "param_bytes_mb": 13571.0,
+      "buffer_bytes_mb": 0.0,
+      "dtypes": [
+        "torch.bfloat16"
+      ]
+    },
+    "inputs": {
+      "prompt_embeds": {
+        "shape": [
+          1,
+          637,
+          4096
+        ],
+        "dtype": "torch.bfloat16",
+        "elements": 2609152,
+        "bytes_mb": 4.977
+      }
+    },
+    "outputs": {
+      "latents": {
+        "shape": [
+          1,
+          1024,
+          64
+        ],
+        "dtype": "torch.bfloat16",
+        "elements": 65536,
+        "bytes_mb": 0.125
+      }
+    },
+    "per_step_s": {
+      "first": 0.7196,
+      "median": 0.2831,
+      "mean": 0.2938,
+      "all": [
+        0.7196,
+        0.2805,
+        0.283,
+        0.2815,
+        0.2809,
+        0.281,
+        0.2834,
+        0.2811,
+        0.2815,
+        0.2838,
+        0.2814,
+        0.2819,
+        0.2823,
+        0.2827,
+        0.2819,
+        0.2819,
+        0.2828,
+        0.2823,
+        0.2815,
+        0.283,
+        0.2833,
+        0.2833,
+        0.2829,
+        0.2838,
+        0.2831,
+        0.2832,
+        0.2838,
+        0.284,
+        0.2832,
+        0.2829,
+        0.2846,
+        0.2837,
+        0.2837,
+        0.2839,
+        0.2844,
+        0.2828,
+        0.284,
+        0.284,
+        0.2838,
+        0.2836
+      ]
+    },
+    "artifact": {
+      "path": "/workspace/out/artifacts/latents.pt",
+      "size_mb": 0.127
+    }
+  },
+  "env": {
+    "stage": "env",
+    "torch": "2.13.0+cu126",
+    "cuda": "12.6",
+    "gpu": "NVIDIA GeForce RTX 3090",
+    "gpu_total_gb": 23.56,
+    "capability": [
+      8,
+      6
+    ],
+    "host_ram_gb": 251.49,
+    "cpu_count": 64,
+    "diffusers": "0.41.0.dev0",
+    "transformers": "5.17.0",
+    "accelerate": "1.15.0",
+    "huggingface_hub": "1.32.0",
+    "nvidia_smi": "NVIDIA GeForce RTX 3090, 24576 MiB, 580.65.06"
+  },
+  "fetch": {
+    "stage": "fetch",
+    "model_id": "Qwen/Qwen-Image-2.1",
+    "latency_s": {
+      "download": 296.357,
+      "total": 296.358
+    },
+    "checkpoint_size_mb": {
+      "text_encoder": 16722.1,
+      "transformer": 13571.1,
+      "vae": 1288.4,
+      "processor": 15.1,
+      "scheduler": 0.0,
+      "TOTAL": 31596.7
+    },
+    "download_mb_per_s": 106.6
+  },
+  "fit": {
+    "stage": "fit",
+    "latency_s": {
+      "load_cpu": 0.879,
+      "total": 3.499
+    },
+    "gpu": {
+      "name": "NVIDIA GeForce RTX 3090",
+      "total_mb": 24124.2,
+      "peak_device_used_mb": 22609.1,
+      "torch_peak_allocated_mb": 23681.4,
+      "torch_peak_reserved_mb": 23848.0
+    },
+    "host": {
+      "peak_rss_mb": 6955.0,
+      "ru_maxrss_mb": 8516.0,
+      "total_ram_gb": 251.49
+    },
+    "oom": true,
+    "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 32.00 MiB. GPU 0 has a total capacity of 23.56 GiB of which 11.06 MiB is free. Including non-PyTorch memory, this process has 23.54 GiB memory in use. Of the allocated memory 23.13 GiB is allocated by PyTorch, and 166.58 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)"
+  },
+  "vae": {
+    "stage": "vae",
+    "latency_s": {
+      "import": 3.509,
+      "load_latents": 0.006,
+      "load_cpu": 0.451,
+      "to_gpu": 0.066,
+      "decode": 0.278,
+      "save": 0.14,
+      "total": 4.449
+    },
+    "gpu": {
+      "name": "NVIDIA GeForce RTX 3090",
+      "total_mb": 24124.2,
+      "peak_device_used_mb": 2833.1,
+      "torch_peak_allocated_mb": 2333.3,
+      "torch_peak_reserved_mb": 2660.0
+    },
+    "host": {
+      "peak_rss_mb": 2669.2,
+      "ru_maxrss_mb": 2717.8,
+      "total_ram_gb": 251.49
+    },
+    "vae": {
+      "class": "AutoencoderKLQwenImage21",
+      "params": 337740404,
+      "params_billions": 0.338,
+      "param_bytes_mb": 644.2,
+      "buffer_bytes_mb": 0.0,
+      "dtypes": [
+        "torch.bfloat16"
+      ]
+    },
+    "inputs": {
+      "packed_latents": {
+        "shape": [
+          1,
+          1024,
+          64
+        ],
+        "dtype": "torch.bfloat16",
+        "elements": 65536,
+        "bytes_mb": 0.125
+      },
+      "unpacked_latents": {
+        "shape": [
+          1,
+          64,
+          1,
+          32,
+          32
+        ],
+        "dtype": "torch.bfloat16",
+        "elements": 65536,
+        "bytes_mb": 0.125
+      }
+    },
+    "outputs": {
+      "decoded_tensor": {
+        "shape": [
+          1,
+          4,
+          512,
+          512
+        ],
+        "dtype": "torch.bfloat16",
+        "elements": 1048576,
+        "bytes_mb": 2.0
+      },
+      "image_mode": "RGBA",
+      "image_size": [
+        512,
+        512
+      ],
+      "alpha_min": 253
+    },
+    "artifact": {
+      "path": "/workspace/out/artifacts/image.png",
+      "size_mb": 0.308
+    },
+    "artifact_flat": {
+      "path": "/workspace/out/artifacts/image_rgb.png",
+      "size_mb": 0.27
+    },
+    "compression_ratio_latent_to_png": 0.406
+  },
+  "vl": {
+    "stage": "vl",
+    "latency_s": {
+      "import": 3.791,
+      "load_cpu": 0.793,
+      "to_gpu": 3.465,
+      "encode": 1.21,
+      "save": 0.005,
+      "total": 9.265
+    },
+    "gpu": {
+      "name": "NVIDIA GeForce RTX 3090",
+      "total_mb": 24124.2,
+      "peak_device_used_mb": 17713.1,
+      "torch_peak_allocated_mb": 17241.0,
+      "torch_peak_reserved_mb": 17390.0
+    },
+    "host": {
+      "peak_rss_mb": 4724.5,
+      "ru_maxrss_mb": 5698.6,
+      "total_ram_gb": 251.49
+    },
+    "prompt_chars": 2906,
+    "prompt_words": 504,
+    "text_encoder": {
+      "class": "Qwen3VLForConditionalGeneration",
+      "params": 8767123696,
+      "params_billions": 8.767,
+      "param_bytes_mb": 16722.0,
+      "buffer_bytes_mb": 0.0,
+      "dtypes": [
+        "torch.bfloat16"
+      ]
+    },
+    "outputs": {
+      "prompt_embeds": {
+        "shape": [
+          1,
+          637,
+          4096
+        ],
+        "dtype": "torch.bfloat16",
+        "elements": 2609152,
+        "bytes_mb": 4.977
+      },
+      "prompt_embeds_mask": null,
+      "image_pad_mask": {
+        "shape": [
+          1,
+          637
+        ],
+        "dtype": "torch.bool",
+        "elements": 637,
+        "bytes_mb": 0.001
+      }
+    },
+    "artifact": {
+      "path": "/workspace/out/artifacts/prompt_embeds.pt",
+      "size_mb": 4.979
+    }
+  }
+}

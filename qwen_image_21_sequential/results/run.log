@@ -1,0 +1,450 @@
+[boot] Mon Sep 21 19:53:30 UTC 2026 starting
+Mon Sep 21 19:53:30 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.159.04             Driver Version: 580.159.04     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GeForce RTX 5090        On  |   00000000:0F:00.0 Off |                  N/A |
+|  0%   27C    P8             18W /  575W |       1MiB /  32607MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Filesystem      Size  Used Avail Use% Mounted on
+overlay          80G   70M   80G   1% /
+[boot] file server up on :8000
+[19:53:38] installing dependencies
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+virtualenv 21.9.0 requires filelock<4,>=3.24.2; python_version >= "3.10", but you have filelock 4.0.1 which is incompatible.
+[19:54:51] dependencies installed
+[19:54:51] ---------- stage env ----------
+
+########## stage: env ##########
+
+=== metrics/env.json ===
+{
+  "stage": "env",
+  "torch": "2.13.0+cu129",
+  "cuda": "12.9",
+  "gpu": "NVIDIA GeForce RTX 5090",
+  "gpu_total_gb": 31.36,
+  "capability": [
+    12,
+    0
+  ],
+  "host_ram_gb": 1003.63,
+  "cpu_count": 236,
+  "diffusers": "0.41.0.dev0",
+  "transformers": "5.17.0",
+  "accelerate": "1.15.0",
+  "nvidia_smi": "NVIDIA GeForce RTX 5090, 32607 MiB, 580.159.04"
+}
+[19:55:04] stage env finished rc=0 in 13s
+[19:55:04] ---------- stage fetch ----------
+
+########## stage: fetch ##########
+Fetching 26 files:   0%|          | 0/26 [00:00<?, ?it/s]Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 26 files:   4%|▍         | 1/26 [00:00<00:12,  1.96it/s]Fetching 26 files:   8%|▊         | 2/26 [00:01<00:16,  1.49it/s]Fetching 26 files:  15%|█▌        | 4/26 [00:01<00:07,  3.14it/s]Fetching 26 files:  27%|██▋       | 7/26 [00:01<00:03,  5.07it/s]Fetching 26 files:  35%|███▍      | 9/26 [00:01<00:02,  6.73it/s]Fetching 26 files:  42%|████▏     | 11/26 [00:02<00:02,  5.46it/s]Fetching 26 files:  50%|█████     | 13/26 [00:02<00:01,  6.92it/s]Fetching 26 files:  58%|█████▊    | 15/26 [00:02<00:01,  6.35it/s]Fetching 26 files:  65%|██████▌   | 17/26 [00:03<00:01,  7.84it/s]Fetching 26 files:  73%|███████▎  | 19/26 [00:03<00:01,  6.24it/s]Fetching 26 files:  77%|███████▋  | 20/26 [16:21<17:38, 176.38s/it]Fetching 26 files:  81%|████████  | 21/26 [19:37<15:02, 180.49s/it]Fetching 26 files:  85%|████████▍ | 22/26 [27:23<16:19, 244.92s/it]Fetching 26 files:  88%|████████▊ | 23/26 [30:43<11:42, 234.06s/it]Fetching 26 files:  92%|█████████▏| 24/26 [32:42<06:48, 204.23s/it]Fetching 26 files:  96%|█████████▌| 25/26 [36:27<03:29, 209.93s/it]Fetching 26 files: 100%|██████████| 26/26 [36:29<00:00, 152.00s/it]Fetching 26 files: 100%|██████████| 26/26 [36:29<00:00, 84.21s/it] 
+  [download] 2190.083s
+
+=== metrics/fetch.json ===
+{
+  "stage": "fetch",
+  "model_id": "Qwen/Qwen-Image-2.1",
+  "latency_s": {
+    "download": 2190.083,
+    "total": 2190.085
+  },
+  "checkpoint_size_mb": {
+    "text_encoder": 16722.1,
+    "transformer": 13571.1,
+    "vae": 1288.4,
+    "processor": 15.1,
+    "scheduler": 0.0,
+    "TOTAL": 31596.7
+  },
+  "download_mb_per_s": 14.4
+}
+[20:31:35] stage fetch finished rc=0 in 2191s
+[20:31:35] ---------- stage vl ----------
+
+########## stage: vl ##########
+  [import] 11.087s
+Loading pipeline components...:   0%|          | 0/3 [00:00<?, ?it/s]
+Loading weights:   0%|          | 0/750 [00:00<?, ?it/s][A
+Loading weights:   6%|▌         | 42/750 [00:00<00:01, 414.25it/s][A
+Loading weights:  11%|█         | 84/750 [00:00<00:04, 157.35it/s][A
+Loading weights:  14%|█▍        | 108/750 [00:00<00:04, 144.24it/s][A
+Loading weights:  59%|█████▊    | 439/750 [00:00<00:00, 833.64it/s][A
+Loading weights:  94%|█████████▎| 702/750 [00:00<00:00, 1258.75it/s][ALoading weights: 100%|██████████| 750/750 [00:00<00:00, 844.84it/s] 
+Loading pipeline components...:  67%|██████▋   | 2/3 [00:03<00:01,  1.59s/it]Loading pipeline components...: 100%|██████████| 3/3 [00:04<00:00,  1.32s/it]Loading pipeline components...: 100%|██████████| 3/3 [00:04<00:00,  1.37s/it]
+  [load_cpu] 4.195s
+  [to_gpu] 8.016s
+  [encode] 2.797s
+  [save] 0.011s
+
+=== metrics/vl.json ===
+{
+  "stage": "vl",
+  "latency_s": {
+    "import": 11.087,
+    "load_cpu": 4.195,
+    "to_gpu": 8.016,
+    "encode": 2.797,
+    "save": 0.011,
+    "total": 26.11
+  },
+  "gpu": {
+    "name": "NVIDIA GeForce RTX 5090",
+    "total_mb": 32109.1,
+    "peak_device_used_mb": 17579.2,
+    "torch_peak_allocated_mb": 17265.0,
+    "torch_peak_reserved_mb": 17410.0
+  },
+  "host": {
+    "peak_rss_mb": 5562.5,
+    "ru_maxrss_mb": 5721.8,
+    "total_ram_gb": 1003.63
+  },
+  "prompt_chars": 2906,
+  "prompt_words": 504,
+  "text_encoder": {
+    "class": "Qwen3VLForConditionalGeneration",
+    "params": 8767123696,
+    "params_billions": 8.767,
+    "param_bytes_mb": 16722.0,
+    "buffer_bytes_mb": 0.0,
+    "dtypes": [
+      "torch.bfloat16"
+    ]
+  },
+  "outputs": {
+    "prompt_embeds": {
+      "shape": [
+        1,
+        637,
+        4096
+      ],
+      "dtype": "torch.bfloat16",
+      "elements": 2609152,
+      "bytes_mb": 4.977
+    },
+    "prompt_embeds_mask": null,
+    "image_pad_mask": {
+      "shape": [
+        1,
+        637
+      ],
+      "dtype": "torch.bool",
+      "elements": 637,
+      "bytes_mb": 0.001
+    }
+  },
+  "artifact": {
+    "path": "/workspace/out/artifacts/prompt_embeds.pt",
+    "size_mb": 4.979
+  }
+}
+[20:32:04] stage vl finished rc=0 in 29s
+[20:32:04] ---------- stage dit ----------
+
+########## stage: dit ##########
+  [import] 11.487s
+  [load_embeds] 0.413s
+Loading pipeline components...:   0%|          | 0/3 [00:00<?, ?it/s]Loading pipeline components...:  33%|███▎      | 1/3 [00:01<00:02,  1.18s/it]
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s][ALoading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 106.94it/s]
+Loading pipeline components...: 100%|██████████| 3/3 [00:03<00:00,  1.06s/it]Loading pipeline components...: 100%|██████████| 3/3 [00:03<00:00,  1.07s/it]
+  [load_cpu] 3.284s
+  [to_gpu] 7.674s
+  0%|          | 0/40 [00:00<?, ?it/s]  2%|▎         | 1/40 [00:01<00:39,  1.01s/it]  5%|▌         | 2/40 [00:01<00:18,  2.11it/s] 10%|█         | 4/40 [00:01<00:08,  4.18it/s] 15%|█▌        | 6/40 [00:01<00:05,  5.78it/s] 18%|█▊        | 7/40 [00:01<00:05,  6.46it/s] 20%|██        | 8/40 [00:01<00:04,  6.95it/s] 22%|██▎       | 9/40 [00:01<00:04,  6.42it/s] 25%|██▌       | 10/40 [00:02<00:04,  6.94it/s] 28%|██▊       | 11/40 [00:02<00:04,  7.03it/s] 30%|███       | 12/40 [00:02<00:03,  7.45it/s] 32%|███▎      | 13/40 [00:02<00:03,  7.97it/s] 35%|███▌      | 14/40 [00:02<00:03,  8.39it/s] 38%|███▊      | 15/40 [00:02<00:02,  8.74it/s] 40%|████      | 16/40 [00:02<00:02,  8.99it/s] 42%|████▎     | 17/40 [00:02<00:02,  9.19it/s] 45%|████▌     | 18/40 [00:02<00:02,  8.32it/s] 48%|████▊     | 19/40 [00:03<00:02,  8.30it/s] 50%|█████     | 20/40 [00:03<00:02,  8.71it/s] 52%|█████▎    | 21/40 [00:03<00:02,  8.91it/s] 55%|█████▌    | 22/40 [00:03<00:01,  9.20it/s] 57%|█████▊    | 23/40 [00:03<00:01,  9.27it/s] 60%|██████    | 24/40 [00:03<00:01,  9.42it/s] 62%|██████▎   | 25/40 [00:03<00:01,  9.45it/s] 65%|██████▌   | 26/40 [00:03<00:01,  8.68it/s] 68%|██████▊   | 27/40 [00:03<00:01,  8.17it/s] 70%|███████   | 28/40 [00:04<00:01,  8.41it/s] 72%|███████▎  | 29/40 [00:04<00:01,  8.66it/s] 75%|███████▌  | 30/40 [00:04<00:01,  8.78it/s] 78%|███████▊  | 31/40 [00:04<00:01,  8.60it/s] 80%|████████  | 32/40 [00:04<00:01,  7.91it/s] 85%|████████▌ | 34/40 [00:04<00:00,  7.66it/s] 88%|████████▊ | 35/40 [00:04<00:00,  7.41it/s] 90%|█████████ | 36/40 [00:05<00:00,  6.72it/s] 92%|█████████▎| 37/40 [00:05<00:00,  6.60it/s] 95%|█████████▌| 38/40 [00:05<00:00,  6.12it/s] 98%|█████████▊| 39/40 [00:05<00:00,  6.11it/s]100%|██████████| 40/40 [00:05<00:00,  6.89it/s]
+  [denoise] 5.846s
+  [save] 0.002s
+
+=== metrics/dit.json ===
+{
+  "stage": "dit",
+  "latency_s": {
+    "import": 11.487,
+    "load_embeds": 0.413,
+    "load_cpu": 3.284,
+    "to_gpu": 7.674,
+    "denoise": 5.846,
+    "save": 0.002,
+    "total": 28.706
+  },
+  "gpu": {
+    "name": "NVIDIA GeForce RTX 5090",
+    "total_mb": 32109.1,
+    "peak_device_used_mb": 14855.2,
+    "torch_peak_allocated_mb": 14171.9,
+    "torch_peak_reserved_mb": 14254.0
+  },
+  "host": {
+    "peak_rss_mb": 10332.2,
+    "ru_maxrss_mb": 10469.1,
+    "total_ram_gb": 1003.63
+  },
+  "resolution": {
+    "height": 512,
+    "width": 512
+  },
+  "num_inference_steps": 40,
+  "seed": 42,
+  "transformer": {
+    "class": "QwenImage21Transformer2DModel",
+    "params": 7115124736,
+    "params_billions": 7.115,
+    "param_bytes_mb": 13571.0,
+    "buffer_bytes_mb": 0.0,
+    "dtypes": [
+      "torch.bfloat16"
+    ]
+  },
+  "inputs": {
+    "prompt_embeds": {
+      "shape": [
+        1,
+        637,
+        4096
+      ],
+      "dtype": "torch.bfloat16",
+      "elements": 2609152,
+      "bytes_mb": 4.977
+    }
+  },
+  "outputs": {
+    "latents": {
+      "shape": [
+        1,
+        1024,
+        64
+      ],
+      "dtype": "torch.bfloat16",
+      "elements": 65536,
+      "bytes_mb": 0.125
+    }
+  },
+  "per_step_s": {
+    "first": 1.0432,
+    "median": 0.1072,
+    "mean": 0.146,
+    "all": [
+      1.0432,
+      0.1024,
+      0.0994,
+      0.0989,
+      0.0996,
+      0.0989,
+      0.1006,
+      0.114,
+      0.1863,
+      0.1156,
+      0.1378,
+      0.1149,
+      0.1046,
+      0.1044,
+      0.1031,
+      0.1041,
+      0.1031,
+      0.1467,
+      0.1216,
+      0.1019,
+      0.1062,
+      0.1004,
+      0.1061,
+      0.1022,
+      0.1051,
+      0.139,
+      0.1385,
+      0.1125,
+      0.1072,
+      0.1031,
+      0.1289,
+      0.1503,
+      0.1002,
+      0.1705,
+      0.1491,
+      0.1965,
+      0.1586,
+      0.1999,
+      0.1655,
+      0.0992
+    ]
+  },
+  "artifact": {
+    "path": "/workspace/out/artifacts/latents.pt",
+    "size_mb": 0.127
+  }
+}
+[20:32:35] stage dit finished rc=0 in 31s
+[20:32:35] ---------- stage vae ----------
+
+########## stage: vae ##########
+  [import] 16.656s
+  [load_latents] 0.134s
+  [load_cpu] 11.057s
+  [to_gpu] 1.060s
+  [decode] 1.247s
+/workspace/repo/qwen_image_21_sequential/run_stage.py:441: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  alpha_min = int(min(image.getchannel("A").getdata()))
+  [save] 0.514s
+
+=== metrics/vae.json ===
+{
+  "stage": "vae",
+  "latency_s": {
+    "import": 16.656,
+    "load_latents": 0.134,
+    "load_cpu": 11.057,
+    "to_gpu": 1.06,
+    "decode": 1.247,
+    "save": 0.514,
+    "total": 30.67
+  },
+  "gpu": {
+    "name": "NVIDIA GeForce RTX 5090",
+    "total_mb": 32109.1,
+    "peak_device_used_mb": 3359.2,
+    "torch_peak_allocated_mb": 2332.3,
+    "torch_peak_reserved_mb": 2758.0
+  },
+  "host": {
+    "peak_rss_mb": 2750.2,
+    "ru_maxrss_mb": 2373.1,
+    "total_ram_gb": 1003.63
+  },
+  "vae": {
+    "class": "AutoencoderKLQwenImage21",
+    "params": 337740404,
+    "params_billions": 0.338,
+    "param_bytes_mb": 644.2,
+    "buffer_bytes_mb": 0.0,
+    "dtypes": [
+      "torch.bfloat16"
+    ]
+  },
+  "inputs": {
+    "packed_latents": {
+      "shape": [
+        1,
+        1024,
+        64
+      ],
+      "dtype": "torch.bfloat16",
+      "elements": 65536,
+      "bytes_mb": 0.125
+    },
+    "unpacked_latents": {
+      "shape": [
+        1,
+        64,
+        1,
+        32,
+        32
+      ],
+      "dtype": "torch.bfloat16",
+      "elements": 65536,
+      "bytes_mb": 0.125
+    }
+  },
+  "outputs": {
+    "decoded_tensor": {
+      "shape": [
+        1,
+        4,
+        512,
+        512
+      ],
+      "dtype": "torch.bfloat16",
+      "elements": 1048576,
+      "bytes_mb": 2.0
+    },
+    "image_mode": "RGBA",
+    "image_size": [
+      512,
+      512
+    ],
+    "alpha_min": 252
+  },
+  "artifact": {
+    "path": "/workspace/out/artifacts/image.png",
+    "size_mb": 0.307
+  },
+  "artifact_flat": {
+    "path": "/workspace/out/artifacts/image_rgb.png",
+    "size_mb": 0.269
+  },
+  "compression_ratio_latent_to_png": 0.407
+}
+[20:33:10] stage vae finished rc=0 in 35s
+[20:33:10] ---------- stage fit ----------
+
+########## stage: fit ##########
+Loading pipeline components...:   0%|          | 0/5 [00:00<?, ?it/s]Loading pipeline components...:  20%|██        | 1/5 [00:10<00:42, 10.51s/it]
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s][ALoading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 90.86it/s]
+Loading pipeline components...:  40%|████      | 2/5 [00:12<00:16,  5.38s/it]
+Loading weights:   0%|          | 0/750 [00:00<?, ?it/s][A
+Loading weights:   5%|▌         | 41/750 [00:00<00:01, 409.65it/s][A
+Loading weights:  18%|█▊        | 134/750 [00:00<00:00, 711.76it/s][A
+Loading weights:  33%|███▎      | 248/750 [00:00<00:00, 902.25it/s][A
+Loading weights:  50%|████▉     | 374/750 [00:00<00:00, 1040.47it/s][A
+Loading weights:  70%|███████   | 527/750 [00:00<00:00, 1214.80it/s][A
+Loading weights:  87%|████████▋ | 649/750 [00:00<00:00, 1178.13it/s][ALoading weights: 100%|██████████| 750/750 [00:00<00:00, 937.85it/s] 
+Loading pipeline components...:  60%|██████    | 3/5 [00:19<00:12,  6.26s/it]Loading pipeline components...:  80%|████████  | 4/5 [00:21<00:04,  4.35s/it]Loading pipeline components...: 100%|██████████| 5/5 [00:21<00:00,  4.21s/it]
+  [load_cpu] 21.130s
+  [to_gpu] 26.291s
+
+=== metrics/fit.json ===
+{
+  "stage": "fit",
+  "latency_s": {
+    "load_cpu": 21.13,
+    "to_gpu": 26.291,
+    "total": 47.486
+  },
+  "gpu": {
+    "name": "NVIDIA GeForce RTX 5090",
+    "total_mb": 32109.1,
+    "peak_device_used_mb": 31491.2,
+    "torch_peak_allocated_mb": 30954.3,
+    "torch_peak_reserved_mb": 31136.0
+  },
+  "host": {
+    "peak_rss_mb": 11134.9,
+    "ru_maxrss_mb": 10731.8,
+    "total_ram_gb": 1003.63
+  },
+  "oom": false,
+  "error": null,
+  "weights_mb": {
+    "text_encoder": 16722.0,
+    "transformer": 13571.0,
+    "vae": 644.2
+  }
+}
+[20:34:32] stage fit finished rc=0 in 82s
+[20:34:32] collecting metrics
+{
+  "dit": 28.706,
+  "env": null,
+  "fetch": 2190.085,
+  "fit": 47.486,
+  "vae": 30.67,
+  "vl": 26.11
+}
+total 5824
+-rw-r--r-- 1 root root  321906 Sep 21 20:33 image.png
+-rw-r--r-- 1 root root  282325 Sep 21 20:33 image_rgb.png
+-rw-r--r-- 1 root root  132649 Sep 21 20:32 latents.pt
+-rw-r--r-- 1 root root 5220949 Sep 21 20:32 prompt_embeds.pt
+[20:34:33] ALL DONE
+[boot] run_all.sh exited rc=0

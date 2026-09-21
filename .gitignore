@@ -1,0 +1,4 @@
+qwen_image_21_sequential/.pod.json
+__pycache__/
+*.pyc
+qwen_image_21_sequential/.bad-machines.json
