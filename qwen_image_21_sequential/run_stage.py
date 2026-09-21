@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """Run one stage of Qwen-Image-2.1 text-to-image in its own process.
 
-Qwen-Image-2.1 ships three weight blocks that together exceed a 32 GB card:
-a Qwen3-VL text encoder (~17.5 GB bf16), a 32-layer single-stream DiT
-(~14.2 GB bf16) and a 64-channel VAE (~1.35 GB bf16).  Running them in one
-process means all three are resident at once.  Here each stage runs as its
-own process and hands the next one a tensor on disk, so only one block is
-ever on the GPU.
+Qwen-Image-2.1 ships three weight blocks totalling 30.9 GB in bf16: a Qwen3-VL
+text encoder (16.7 GB), a 32-layer single-stream DiT (13.6 GB) and a
+64-channel VAE (0.6 GB).  Loading all three at once needs a card no consumer
+part has -- they do not fit on a 24 GB 3090 at all, and on a 32 GB 5090 they
+fit with too little headroom left to run a forward pass.  Here each stage runs
+as its own process and hands the next one a tensor on disk, so only one block
+is ever on the GPU and the peak is 17.6 GB.
 
   fetch  -> download the checkpoint
   vl     -> Qwen3-VL encodes the prompt        -> prompt_embeds.pt
@@ -219,7 +220,7 @@ def stage_fetch():
         MODEL_ID,
         local_dir=MODEL_DIR,
         ignore_patterns=["assets/*", "*.md"],
-        max_workers=8,
+        max_workers=16,
     )
     t.mark("download")
 
@@ -487,13 +488,13 @@ def stage_fit():
             "transformer": module_stats(pipe.transformer)["param_bytes_mb"],
             "vae": module_stats(pipe.vae)["param_bytes_mb"],
         }
-    except torch.cuda.OutOfMemoryError as e:
-        result["oom"] = True
-        result["error"] = str(e)[:600]
-        print(f"OOM as expected: {str(e)[:300]}", flush=True)
     except Exception as e:  # noqa: BLE001
-        result["error"] = f"{type(e).__name__}: {str(e)[:600]}"
-        print(f"failed: {result['error']}", flush=True)
+        # diffusers wraps the allocator's error on its way out of `.to()`, so
+        # match on the message rather than only on OutOfMemoryError.
+        msg = str(e)
+        result["oom"] = isinstance(e, torch.cuda.OutOfMemoryError) or "out of memory" in msg.lower()
+        result["error"] = f"{type(e).__name__}: {msg[:600]}"
+        print(f"{'OOM' if result['oom'] else 'failed'}: {msg[:300]}", flush=True)
     finish("fit", t, gpu, host, result)
 
 
