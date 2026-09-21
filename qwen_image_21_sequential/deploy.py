@@ -33,6 +33,9 @@ API = "https://api.runpod.io/graphql"
 KEY = os.environ["RUNPOD_KEY"]
 HERE = os.path.dirname(os.path.abspath(__file__))
 STATE = os.path.join(HERE, ".pod.json")
+# Machines that failed at host level, remembered across runs so a later
+# invocation does not rediscover them the slow way.
+BADLIST = os.path.join(HERE, ".bad-machines.json")
 
 POD_NAME = "qwen-image-21-sequential"
 DEFAULT_GPU = "NVIDIA GeForce RTX 3090"
@@ -70,6 +73,7 @@ RUN_TIMEOUT = 7200      # DONE never arrives
 POLL = 15
 CAPACITY_WAIT = 1800    # how long to wait out "no instances available"
 CAPACITY_POLL = 45
+BADLIST_TTL = 86400     # a host bad today may be fine tomorrow
 
 _live = set()           # pod ids this process created and has not terminated
 
@@ -211,6 +215,25 @@ def status_of(base_url):
     return data.decode(errors="replace").strip()
 
 
+def load_badlist():
+    try:
+        with open(BADLIST) as f:
+            return {k: v for k, v in json.load(f).items()
+                    if time.time() - v.get("at", 0) < BADLIST_TTL}
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+def record_bad(machine, reason):
+    bad = load_badlist()
+    bad[machine] = {"reason": reason, "at": time.time()}
+    try:
+        with open(BADLIST, "w") as f:
+            json.dump(bad, f, indent=2)
+    except Exception as e:  # noqa: BLE001
+        print(f"  (could not persist badlist: {e})")
+
+
 def save_state(d):
     with open(STATE, "w") as f:
         json.dump(d, f, indent=2)
@@ -230,7 +253,9 @@ def cmd_run(args):
     # scheduler is sticky and will hand back the same machine, so remember the
     # bad ones and drop straight back out of them -- that costs seconds and a
     # cent, against the ten minutes a boot timeout takes to notice.
-    bad_machines = set()
+    bad_machines = set(load_badlist())
+    if bad_machines:
+        print(f"skipping {len(bad_machines)} machine(s) known bad from earlier runs")
     attempt, deploys = 0, 0
     while attempt < args.attempts and deploys < args.attempts * 4:
         pod = deploy(args.gpu, args.cloud)
@@ -261,6 +286,7 @@ def cmd_run(args):
             return 0
         if outcome in ROTATE or outcome == "NO_BOOT":
             bad_machines.add(machine)
+            record_bad(machine, outcome)
             print(f"host-level failure ({outcome}) on {machine}; "
                   f"blacklisted, rotating to another machine")
             continue

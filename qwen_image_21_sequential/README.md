@@ -157,7 +157,8 @@ broken GPU passthrough — `nvidia-smi` printed an empty device table and torch
 raised *"CUDA unknown error"*. RunPod then handed back the **same machine** on
 the next request. *Fix:* `run` records the `machineId` of any host that fails at
 host level and immediately releases a pod that lands back on one, which costs a
-few seconds instead of a ten-minute boot timeout.
+few seconds instead of a ten-minute boot timeout, and persists the list to
+`.bad-machines.json` (24 h TTL) so the *next* invocation skips them too.
 
 **7. Community capacity comes and goes.** `podFindAndDeployOnDemand` returns
 `SUPPLY_CONSTRAINT` when no host of that type is free, which is normal on
