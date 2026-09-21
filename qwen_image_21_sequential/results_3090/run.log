@@ -1,0 +1,103 @@
+[boot] Mon Sep 21 21:52:15 UTC 2026 starting
+Mon Sep 21 21:52:15 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.65.06              Driver Version: 580.65.06      CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GeForce RTX 3090        On  |   00000000:01:00.0 Off |                  N/A |
+| 31%   25C    P8             31W /  350W |       1MiB /  24576MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Filesystem      Size  Used Avail Use% Mounted on
+overlay          80G  161M   80G   1% /
+[boot] python: /usr/bin/python3 torch 2.13.0+cu126
+[boot] file server up on :8000
+[boot] NVIDIA GeForce RTX 3090  23.56 GiB  sm_86
+[21:52:22] installing dependencies into /usr/bin/python3
+error: externally-managed-environment
+
+× This environment is externally managed
+╰─> To install Python packages system-wide, try apt install
+    python3-xyz, where xyz is the package you are trying to
+    install.
+    
+    If you wish to install a non-Debian-packaged Python package,
+    create a virtual environment using python3 -m venv path/to/venv.
+    Then use path/to/venv/bin/python and path/to/venv/bin/pip. Make
+    sure you have python3-full installed.
+    
+    If you wish to install a non-Debian packaged Python application,
+    it may be easiest to use pipx install xyz, which will manage a
+    virtual environment for you. Make sure you have pipx installed.
+    
+    See /usr/share/doc/python3.12/README.venv for more information.
+
+note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.
+hint: See PEP 668 for the detailed specification.
+error: externally-managed-environment
+
+× This environment is externally managed
+╰─> To install Python packages system-wide, try apt install
+    python3-xyz, where xyz is the package you are trying to
+    install.
+    
+    If you wish to install a non-Debian-packaged Python package,
+    create a virtual environment using python3 -m venv path/to/venv.
+    Then use path/to/venv/bin/python and path/to/venv/bin/pip. Make
+    sure you have python3-full installed.
+    
+    If you wish to install a non-Debian packaged Python application,
+    it may be easiest to use pipx install xyz, which will manage a
+    virtual environment for you. Make sure you have pipx installed.
+    
+    See /usr/share/doc/python3.12/README.venv for more information.
+
+note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.
+hint: See PEP 668 for the detailed specification.
+[21:52:22] dependencies installed
+[21:52:22] ---------- stage env ----------
+
+########## stage: env ##########
+
+=== metrics/env.json ===
+{
+  "stage": "env",
+  "torch": "2.13.0+cu126",
+  "cuda": "12.6",
+  "gpu": "NVIDIA GeForce RTX 3090",
+  "gpu_total_gb": 23.56,
+  "capability": [
+    8,
+    6
+  ],
+  "host_ram_gb": 251.68,
+  "cpu_count": 64,
+  "diffusers": "missing: No module named 'diffusers'",
+  "transformers": "missing: No module named 'transformers'",
+  "accelerate": "missing: No module named 'accelerate'",
+  "nvidia_smi": "NVIDIA GeForce RTX 3090, 24576 MiB, 580.65.06"
+}
+[21:52:24] stage env finished rc=0 in 2s
+[21:52:24] ---------- stage fetch ----------
+
+########## stage: fetch ##########
+Traceback (most recent call last):
+  File "/workspace/repo/qwen_image_21_sequential/run_stage.py", line 551, in <module>
+    STAGES[args.stage]()
+  File "/workspace/repo/qwen_image_21_sequential/run_stage.py", line 215, in stage_fetch
+    from huggingface_hub import snapshot_download
+ModuleNotFoundError: No module named 'huggingface_hub'
+[21:52:24] stage fetch finished rc=1 in 0s
+[21:52:24] ABORTING
+[boot] run_all.sh exited rc=1

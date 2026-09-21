@@ -144,19 +144,27 @@ installs land in the same interpreter that runs the stages.
 `_stop()`; shadowing it makes every stage compute correctly and then die in
 teardown with `'Event' object is not callable`.
 
-**5. Bad community hosts, and a sticky scheduler.** One community 3090 had
+**5. PEP 668 blocks `pip install`.** The upstream `pytorch/pytorch` image's
+interpreter is Debian-packaged and marks itself externally managed, so every
+`pip install` was refused — and piping pip to `tail` meant the shell saw
+`tail`'s exit status, so the run sailed on and only died three stages later at
+`ModuleNotFoundError`. *Fix:* `run_all.sh` probes for `--break-system-packages`
+and passes it when supported, checks pip's real exit status, verifies the
+imports, and the `env` stage now aborts if anything is missing.
+
+**6. Bad community hosts, and a sticky scheduler.** One community 3090 had
 broken GPU passthrough — `nvidia-smi` printed an empty device table and torch
 raised *"CUDA unknown error"*. RunPod then handed back the **same machine** on
 the next request. *Fix:* `run` records the `machineId` of any host that fails at
 host level and immediately releases a pod that lands back on one, which costs a
 few seconds instead of a ten-minute boot timeout.
 
-**6. Community capacity comes and goes.** `podFindAndDeployOnDemand` returns
+**7. Community capacity comes and goes.** `podFindAndDeployOnDemand` returns
 `SUPPLY_CONSTRAINT` when no host of that type is free, which is normal on
 community for a popular card. *Fix:* `deploy()` sits through it, retrying every
 45 s for up to 30 minutes (`CAPACITY_WAIT`), instead of failing the run.
 
-**7. The download dominates.** 31.6 GB at 14.4 MB/s unauthenticated was 36 of the
+**8. The download dominates.** 31.6 GB at 14.4 MB/s unauthenticated was 36 of the
 43 minutes of the successful run. Set `HF_TOKEN` in the pod environment if you
 have one; `HF_HUB_ENABLE_HF_TRANSFER=1` and `max_workers=16` are already on.
 

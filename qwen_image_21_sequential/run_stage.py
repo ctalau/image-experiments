@@ -518,11 +518,13 @@ def stage_env():
         "host_ram_gb": host_ram_gb(),
         "cpu_count": os.cpu_count(),
     }
-    for mod in ("diffusers", "transformers", "accelerate"):
+    missing = []
+    for mod in ("diffusers", "transformers", "accelerate", "huggingface_hub"):
         try:
             info[mod] = __import__(mod).__version__
         except Exception as e:  # noqa: BLE001
             info[mod] = f"missing: {e}"
+            missing.append(mod)
     try:
         info["nvidia_smi"] = subprocess.run(
             ["nvidia-smi", "--query-gpu=name,memory.total,driver_version", "--format=csv,noheader"],
@@ -531,6 +533,8 @@ def stage_env():
     except Exception:
         pass
     write_metrics("env", info)
+    if missing:
+        raise SystemExit(f"required packages did not install: {', '.join(missing)}")
 
 
 STAGES = {

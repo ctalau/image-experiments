@@ -58,7 +58,10 @@ BOOT = (
 )
 
 # Statuses the pod writes to /workspace/out/STATUS.
-ROTATE = ("FAILED:cuda", "FAILED:env")  # the host's fault -- try another one
+# Host-level failures worth retrying elsewhere. Everything else (a failed
+# install, a stage that raised) is the code's fault and rotating just burns
+# money re-running the same bug.
+ROTATE = ("FAILED:cuda",)
 ARTIFACTS = ["run.log", "metrics.json", "STATUS",
              "artifacts/image.png", "artifacts/image_rgb.png"]
 

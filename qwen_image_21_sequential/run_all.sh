@@ -32,12 +32,38 @@ status() { echo "$1" > "$OUT/STATUS"; }
 
 status "installing"
 say "installing dependencies into $("$PY" -c 'import sys; print(sys.executable)')"
-"$PY" -m pip install --no-cache-dir -q -U \
-    "transformers>=5.17" accelerate safetensors pillow \
-    huggingface_hub hf_transfer importlib_metadata filelock regex requests numpy 2>&1 | tail -20
+
+# Debian-packaged interpreters mark themselves externally managed (PEP 668) and
+# refuse a plain `pip install`. This is a single-purpose container, so installing
+# into the system interpreter is the point -- but only pass the flag if this pip
+# understands it.
+PIP_FLAGS=""
+if "$PY" -m pip install --help 2>/dev/null | grep -q -- "--break-system-packages"; then
+    PIP_FLAGS="--break-system-packages"
+    say "pip: using --break-system-packages (PEP 668 interpreter)"
+fi
+
+pip_install() {
+    # A bare `pip ... | tail` reports tail's exit status, which hides every
+    # install failure until something downstream fails to import.
+    if ! "$PY" -m pip install --no-cache-dir -q $PIP_FLAGS "$@" > /tmp/pip.log 2>&1; then
+        say "pip install failed:"
+        tail -30 /tmp/pip.log
+        status "FAILED:install"
+        exit 1
+    fi
+}
+
+pip_install -U "transformers>=5.17" accelerate safetensors pillow \
+    huggingface_hub hf_transfer importlib_metadata filelock regex requests numpy
 # --no-deps keeps pip from touching the image's torch build.
-"$PY" -m pip install --no-cache-dir -q -U --no-deps \
-    "git+https://github.com/huggingface/diffusers" 2>&1 | tail -20
+pip_install -U --no-deps "git+https://github.com/huggingface/diffusers"
+
+if ! "$PY" -c "import diffusers, transformers, huggingface_hub, accelerate" 2>&1; then
+    say "dependencies did not import after install"
+    status "FAILED:install"
+    exit 1
+fi
 say "dependencies installed"
 
 run_stage() {
