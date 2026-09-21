@@ -500,6 +500,11 @@ def stage_fit():
 def stage_env():
     import torch
 
+    if not torch.cuda.is_available():
+        raise SystemExit(
+            "CUDA is not available to torch; refusing to download 33 GB of weights. "
+            "Usually a driver/toolkit mismatch — check for CUDA error 804 above."
+        )
     info = {
         "stage": "env",
         "torch": torch.__version__,

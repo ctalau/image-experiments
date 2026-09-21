@@ -23,8 +23,11 @@ KEY = os.environ["RUNPOD_KEY"]
 STATE = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".pod.json")
 
 GPU_TYPE = os.environ.get("GPU_TYPE", "NVIDIA GeForce RTX 5090")
+# CUDA 12.8, not 12.9: RunPod's RTX 5090 hosts run a 570 driver, and a cu129
+# build only reaches it through CUDA forward compatibility, which GeForce
+# cards do not support (`cudaGetDeviceCount` fails with error 804).
 IMAGE = os.environ.get(
-    "POD_IMAGE", "runpod/pytorch:1.3.2-cu1290-torch2130-ubuntu2404"
+    "POD_IMAGE", "runpod/pytorch:1.3.2-cu1281-torch2130-ubuntu2404"
 )
 REPO = os.environ.get("REPO_URL", "https://github.com/ctalau/image-experiments")
 BRANCH = os.environ.get("REPO_BRANCH", "claude/qwen-image-runpod-sequential-xr5skn")

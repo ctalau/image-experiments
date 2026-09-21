@@ -31,7 +31,7 @@ status "installing"
 say "installing dependencies"
 pip install --no-cache-dir -q -U \
     "transformers>=5.17" accelerate safetensors pillow \
-    "huggingface_hub[hf_transfer]" importlib_metadata filelock regex requests numpy 2>&1 | tail -20
+    huggingface_hub hf_transfer importlib_metadata filelock regex requests numpy 2>&1 | tail -20
 # --no-deps keeps pip from touching the image's torch build.
 pip install --no-cache-dir -q -U --no-deps \
     "git+https://github.com/huggingface/diffusers" 2>&1 | tail -20
