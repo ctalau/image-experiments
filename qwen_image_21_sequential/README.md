@@ -127,9 +127,18 @@ if the GPU is still unreachable it writes `FAILED:cuda` and `deploy.py` rotates
 to another host. The `env` stage also aborts before the 32 GB download if torch
 cannot see a GPU.
 
-**3. Hosts that never finish pulling the image.** Two of five pods sat at
-`runtime: null` for 15–30 minutes. *Fix:* `BOOT_TIMEOUT` (11 min) with automatic
-rotation to another machine.
+**3. Hosts that never finish pulling the image.** Two of five secure pods sat at
+`runtime: null` for 15–30 minutes, and three community 3090s in a row timed out
+on the 11.3 GB `runpod/pytorch` image. *Fix:* use upstream
+`pytorch/pytorch:2.13.0-cuda12.6-cudnn9-runtime` — same torch build, **3.6 GB
+compressed** — plus `BOOT_TIMEOUT` (11 min) with automatic rotation to another
+machine.
+
+**3b. Images disagree about where python lives.** `runpod/pytorch` puts torch in
+the system `python3`; upstream `pytorch/pytorch` puts it under `/opt/conda` and
+does not add that to `PATH`. *Fix:* `boot.sh` probes candidates for one that can
+`import torch`, exports it as `$PY`, and `run_all.sh` uses `"$PY" -m pip` so the
+installs land in the same interpreter that runs the stages.
 
 **4. Don't name a `threading.Event` `self._stop`.** `Thread.join` calls a private
 `_stop()`; shadowing it makes every stage compute correctly and then die in

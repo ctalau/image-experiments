@@ -8,6 +8,9 @@ OUT=/workspace/out
 ART=$OUT/artifacts
 mkdir -p "$ART" "$OUT/metrics"
 
+# boot.sh resolves the interpreter that owns torch; fall back for a direct run.
+PY=${PY:-python3}
+
 export MODEL_DIR=/workspace/models/Qwen-Image-2.1
 export ART_DIR=$ART
 export METRICS_DIR=$OUT/metrics
@@ -28,12 +31,12 @@ say() { echo "[$(date -u +%H:%M:%S)] $*"; }
 status() { echo "$1" > "$OUT/STATUS"; }
 
 status "installing"
-say "installing dependencies"
-pip install --no-cache-dir -q -U \
+say "installing dependencies into $("$PY" -c 'import sys; print(sys.executable)')"
+"$PY" -m pip install --no-cache-dir -q -U \
     "transformers>=5.17" accelerate safetensors pillow \
     huggingface_hub hf_transfer importlib_metadata filelock regex requests numpy 2>&1 | tail -20
 # --no-deps keeps pip from touching the image's torch build.
-pip install --no-cache-dir -q -U --no-deps \
+"$PY" -m pip install --no-cache-dir -q -U --no-deps \
     "git+https://github.com/huggingface/diffusers" 2>&1 | tail -20
 say "dependencies installed"
 
@@ -42,7 +45,7 @@ run_stage() {
     status "$name"
     say "---------- stage $name ----------"
     local t0=$SECONDS
-    python3 "$STAGE_PY" "$name"
+    "$PY" "$STAGE_PY" "$name"
     local rc=$?
     say "stage $name finished rc=$rc in $((SECONDS - t0))s"
     if [ $rc -ne 0 ] && [ "$name" != "fit" ]; then
@@ -57,18 +60,18 @@ run_stage fetch
 run_stage vl
 run_stage dit
 run_stage vae
-# Control run, last: proves the three blocks do not co-reside on this card.
+# Control run, last: shows whether the three blocks co-reside on this card.
 run_stage fit
 
 say "collecting metrics"
-python3 - <<'PY'
+"$PY" - <<'COLLECT'
 import glob, json, os
 out = {}
 for p in sorted(glob.glob("/workspace/out/metrics/*.json")):
     out[os.path.basename(p)[:-5]] = json.load(open(p))
 json.dump(out, open("/workspace/out/metrics.json", "w"), indent=2)
 print(json.dumps({k: v.get("latency_s", {}).get("total") for k, v in out.items()}, indent=2))
-PY
+COLLECT
 
 ls -l "$ART"
 status "DONE"

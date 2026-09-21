@@ -39,13 +39,13 @@ DEFAULT_GPU = "NVIDIA GeForce RTX 3090"
 REPO = os.environ.get("REPO_URL", "https://github.com/ctalau/image-experiments")
 BRANCH = os.environ.get("REPO_BRANCH", "claude/qwen-image-runpod-sequential-xr5skn")
 
-# CUDA 12.8 rather than 12.9 or 13.0. A cu12.x torch build runs on any driver
-# from 525 up through CUDA minor-version compatibility, but only if it links
-# the *host* driver; when the image's CUDA forward-compatibility libraries are
-# on the loader path instead, a GeForce card fails with `cudaGetDeviceCount`
-# error 804, torch reports no GPU, and everything silently runs on the CPU.
-# boot.sh strips those libraries as a second line of defence.
-IMAGE = os.environ.get("POD_IMAGE", "runpod/pytorch:1.3.2-cu1281-torch2130-ubuntu2404")
+# Upstream pytorch/pytorch rather than runpod/pytorch: 3.6 GB compressed
+# against 11.3 GB, and community hosts routinely fail to pull the larger one
+# inside BOOT_TIMEOUT. It also carries no CUDA forward-compatibility libraries,
+# which removes the error-804 trap outright (boot.sh still guards for it).
+# CUDA 12.6 is the newest cu12 build published for torch 2.13 and runs on any
+# driver from 525 up through CUDA minor-version compatibility.
+IMAGE = os.environ.get("POD_IMAGE", "pytorch/pytorch:2.13.0-cuda12.6-cudnn9-runtime")
 
 # RunPod stores the container start command verbatim, and a value containing
 # newlines leaves the container unable to start with no error anywhere. Keep
