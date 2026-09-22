@@ -1,0 +1,451 @@
+[boot] Tue Sep 22 05:30:18 UTC 2026 starting
+Tue Sep 22 05:30:18 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.65.06              Driver Version: 580.65.06      CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GeForce RTX 3090        On  |   00000000:41:00.0 Off |                  N/A |
+|  0%   19C    P8             19W /  310W |       1MiB /  24576MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Filesystem      Size  Used Avail Use% Mounted on
+overlay          80G  163M   80G   1% /
+[boot] python: /usr/bin/python3 torch 2.13.0+cu126
+[boot] file server up on :8000
+[boot] NVIDIA GeForce RTX 3090  23.56 GiB  sm_86
+[05:30:25] installing dependencies into /usr/bin/python3
+[05:30:25] pip: using --break-system-packages (PEP 668 interpreter)
+/usr/local/lib/python3.12/dist-packages/huggingface_hub/constants.py:301: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.
+  warnings.warn(
+[05:32:50] dependencies installed
+[05:32:50] ---------- stage env ----------
+
+########## stage: env ##########
+/usr/local/lib/python3.12/dist-packages/huggingface_hub/constants.py:301: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.
+  warnings.warn(
+
+=== metrics/env.json ===
+{
+  "stage": "env",
+  "torch": "2.13.0+cu126",
+  "cuda": "12.6",
+  "gpu": "NVIDIA GeForce RTX 3090",
+  "gpu_total_gb": 23.56,
+  "capability": [
+    8,
+    6
+  ],
+  "host_ram_gb": 251.68,
+  "cpu_count": 64,
+  "diffusers": "0.41.0.dev0",
+  "transformers": "5.17.0",
+  "accelerate": "1.15.0",
+  "huggingface_hub": "1.32.0",
+  "nvidia_smi": "NVIDIA GeForce RTX 3090, 24576 MiB, 580.65.06"
+}
+[05:32:54] stage env finished rc=0 in 4s
+[05:32:54] ---------- stage fetch ----------
+
+########## stage: fetch ##########
+/usr/local/lib/python3.12/dist-packages/huggingface_hub/constants.py:301: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.
+  warnings.warn(
+Fetching 26 files:   0%|          | 0/26 [00:00<?, ?it/s]Fetching 26 files:   4%|▍         | 1/26 [00:00<00:02,  8.72it/s]Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 26 files:  31%|███       | 8/26 [00:00<00:00, 37.79it/s]Fetching 26 files:  62%|██████▏   | 16/26 [00:00<00:00, 52.89it/s]Fetching 26 files:  73%|███████▎  | 19/26 [00:19<00:00, 52.89it/s]Fetching 26 files:  77%|███████▋  | 20/26 [06:24<02:52, 28.74s/it]Fetching 26 files:  81%|████████  | 21/26 [12:38<05:10, 62.02s/it]Fetching 26 files:  85%|████████▍ | 22/26 [12:38<03:38, 54.57s/it]Fetching 26 files:  85%|████████▍ | 22/26 [12:50<03:38, 54.57s/it]Fetching 26 files:  88%|████████▊ | 23/26 [18:28<04:54, 98.16s/it]Fetching 26 files:  92%|█████████▏| 24/26 [19:11<02:57, 88.61s/it]Fetching 26 files:  96%|█████████▌| 25/26 [20:47<01:30, 90.00s/it]Fetching 26 files: 100%|██████████| 26/26 [20:49<00:00, 70.45s/it]Fetching 26 files: 100%|██████████| 26/26 [20:49<00:00, 48.05s/it]
+  [download] 1249.498s
+
+=== metrics/fetch.json ===
+{
+  "stage": "fetch",
+  "model_id": "Qwen/Qwen-Image-2.1",
+  "latency_s": {
+    "download": 1249.498,
+    "total": 1249.499
+  },
+  "checkpoint_size_mb": {
+    "text_encoder": 16722.1,
+    "transformer": 13571.1,
+    "vae": 1288.4,
+    "processor": 15.1,
+    "scheduler": 0.0,
+    "TOTAL": 31596.7
+  },
+  "download_mb_per_s": 25.3
+}
+[05:53:44] stage fetch finished rc=0 in 1250s
+[05:53:44] ---------- stage vl ----------
+
+########## stage: vl ##########
+/usr/local/lib/python3.12/dist-packages/huggingface_hub/constants.py:301: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.
+  warnings.warn(
+  [import] 3.616s
+Loading pipeline components...:   0%|          | 0/3 [00:00<?, ?it/s]Loading pipeline components...:  33%|███▎      | 1/3 [00:00<00:00,  2.61it/s]
+Loading weights:   0%|          | 0/750 [00:00<?, ?it/s][ALoading weights: 100%|██████████| 750/750 [00:00<00:00, 11235.26it/s]
+Loading pipeline components...: 100%|██████████| 3/3 [00:00<00:00,  5.42it/s]Loading pipeline components...: 100%|██████████| 3/3 [00:00<00:00,  4.89it/s]
+  [load_cpu] 0.647s
+  [to_gpu] 2.458s
+  [encode] 1.214s
+  [save] 0.006s
+
+=== metrics/vl.json ===
+{
+  "stage": "vl",
+  "latency_s": {
+    "import": 3.616,
+    "load_cpu": 0.647,
+    "to_gpu": 2.458,
+    "encode": 1.214,
+    "save": 0.006,
+    "total": 7.941
+  },
+  "gpu": {
+    "name": "NVIDIA GeForce RTX 3090",
+    "total_mb": 24124.2,
+    "peak_device_used_mb": 17475.1,
+    "torch_peak_allocated_mb": 17241.0,
+    "torch_peak_reserved_mb": 17390.0
+  },
+  "host": {
+    "peak_rss_mb": 5037.4,
+    "ru_maxrss_mb": 5698.9,
+    "total_ram_gb": 251.68
+  },
+  "prompt_chars": 2906,
+  "prompt_words": 504,
+  "text_encoder": {
+    "class": "Qwen3VLForConditionalGeneration",
+    "params": 8767123696,
+    "params_billions": 8.767,
+    "param_bytes_mb": 16722.0,
+    "buffer_bytes_mb": 0.0,
+    "dtypes": [
+      "torch.bfloat16"
+    ]
+  },
+  "outputs": {
+    "prompt_embeds": {
+      "shape": [
+        1,
+        637,
+        4096
+      ],
+      "dtype": "torch.bfloat16",
+      "elements": 2609152,
+      "bytes_mb": 4.977
+    },
+    "prompt_embeds_mask": null,
+    "image_pad_mask": {
+      "shape": [
+        1,
+        637
+      ],
+      "dtype": "torch.bool",
+      "elements": 637,
+      "bytes_mb": 0.001
+    }
+  },
+  "artifact": {
+    "path": "/workspace/out/artifacts/prompt_embeds.pt",
+    "size_mb": 4.979
+  }
+}
+[05:53:52] stage vl finished rc=0 in 8s
+[05:53:52] ---------- stage dit ----------
+
+########## stage: dit ##########
+/usr/local/lib/python3.12/dist-packages/huggingface_hub/constants.py:301: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.
+  warnings.warn(
+  [import] 3.624s
+  [load_embeds] 0.135s
+Loading pipeline components...:   0%|          | 0/3 [00:00<?, ?it/s]Loading pipeline components...:  33%|███▎      | 1/3 [00:00<00:00,  2.67it/s]
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s][ALoading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 152.45it/s]
+Loading pipeline components...: 100%|██████████| 3/3 [00:00<00:00,  7.20it/s]
+  [load_cpu] 0.445s
+  [to_gpu] 2.033s
+  0%|          | 0/40 [00:00<?, ?it/s]  2%|▎         | 1/40 [00:00<00:25,  1.51it/s]  5%|▌         | 2/40 [00:00<00:16,  2.30it/s]  8%|▊         | 3/40 [00:01<00:13,  2.77it/s] 10%|█         | 4/40 [00:01<00:11,  3.06it/s] 12%|█▎        | 5/40 [00:01<00:10,  3.25it/s] 15%|█▌        | 6/40 [00:02<00:10,  3.38it/s] 18%|█▊        | 7/40 [00:02<00:09,  3.46it/s] 20%|██        | 8/40 [00:02<00:09,  3.52it/s] 22%|██▎       | 9/40 [00:02<00:08,  3.56it/s] 25%|██▌       | 10/40 [00:03<00:08,  3.59it/s] 28%|██▊       | 11/40 [00:03<00:08,  3.60it/s] 30%|███       | 12/40 [00:03<00:07,  3.62it/s] 32%|███▎      | 13/40 [00:03<00:07,  3.63it/s] 35%|███▌      | 14/40 [00:04<00:07,  3.63it/s] 38%|███▊      | 15/40 [00:04<00:06,  3.64it/s] 40%|████      | 16/40 [00:04<00:06,  3.65it/s] 42%|████▎     | 17/40 [00:05<00:06,  3.65it/s] 45%|████▌     | 18/40 [00:05<00:06,  3.65it/s] 48%|████▊     | 19/40 [00:05<00:05,  3.65it/s] 50%|█████     | 20/40 [00:05<00:05,  3.65it/s] 52%|█████▎    | 21/40 [00:06<00:05,  3.65it/s] 55%|█████▌    | 22/40 [00:06<00:04,  3.65it/s] 57%|█████▊    | 23/40 [00:06<00:04,  3.65it/s] 60%|██████    | 24/40 [00:06<00:04,  3.65it/s] 62%|██████▎   | 25/40 [00:07<00:04,  3.65it/s] 65%|██████▌   | 26/40 [00:07<00:03,  3.64it/s] 68%|██████▊   | 27/40 [00:07<00:03,  3.64it/s] 70%|███████   | 28/40 [00:08<00:03,  3.64it/s] 72%|███████▎  | 29/40 [00:08<00:03,  3.64it/s] 75%|███████▌  | 30/40 [00:08<00:02,  3.64it/s] 78%|███████▊  | 31/40 [00:08<00:02,  3.64it/s] 80%|████████  | 32/40 [00:09<00:02,  3.64it/s] 82%|████████▎ | 33/40 [00:09<00:01,  3.63it/s] 85%|████████▌ | 34/40 [00:09<00:01,  3.64it/s] 88%|████████▊ | 35/40 [00:09<00:01,  3.64it/s] 90%|█████████ | 36/40 [00:10<00:01,  3.63it/s] 92%|█████████▎| 37/40 [00:10<00:00,  3.63it/s] 95%|█████████▌| 38/40 [00:10<00:00,  3.63it/s] 98%|█████████▊| 39/40 [00:11<00:00,  3.64it/s]100%|██████████| 40/40 [00:11<00:00,  3.63it/s]100%|██████████| 40/40 [00:11<00:00,  3.52it/s]
+  [denoise] 11.389s
+  [save] 0.001s
+
+=== metrics/dit.json ===
+{
+  "stage": "dit",
+  "latency_s": {
+    "import": 3.624,
+    "load_embeds": 0.135,
+    "load_cpu": 0.445,
+    "to_gpu": 2.033,
+    "denoise": 11.389,
+    "save": 0.001,
+    "total": 17.626
+  },
+  "gpu": {
+    "name": "NVIDIA GeForce RTX 3090",
+    "total_mb": 24124.2,
+    "peak_device_used_mb": 14545.1,
+    "torch_peak_allocated_mb": 14148.0,
+    "torch_peak_reserved_mb": 14222.0
+  },
+  "host": {
+    "peak_rss_mb": 9835.6,
+    "ru_maxrss_mb": 10436.6,
+    "total_ram_gb": 251.68
+  },
+  "resolution": {
+    "height": 512,
+    "width": 512
+  },
+  "num_inference_steps": 40,
+  "seed": 42,
+  "transformer": {
+    "class": "QwenImage21Transformer2DModel",
+    "params": 7115124736,
+    "params_billions": 7.115,
+    "param_bytes_mb": 13571.0,
+    "buffer_bytes_mb": 0.0,
+    "dtypes": [
+      "torch.bfloat16"
+    ]
+  },
+  "inputs": {
+    "prompt_embeds": {
+      "shape": [
+        1,
+        637,
+        4096
+      ],
+      "dtype": "torch.bfloat16",
+      "elements": 2609152,
+      "bytes_mb": 4.977
+    }
+  },
+  "outputs": {
+    "latents": {
+      "shape": [
+        1,
+        1024,
+        64
+      ],
+      "dtype": "torch.bfloat16",
+      "elements": 65536,
+      "bytes_mb": 0.125
+    }
+  },
+  "per_step_s": {
+    "first": 0.682,
+    "median": 0.2747,
+    "mean": 0.2846,
+    "all": [
+      0.682,
+      0.2737,
+      0.2751,
+      0.274,
+      0.2731,
+      0.2734,
+      0.2749,
+      0.2736,
+      0.2732,
+      0.2741,
+      0.2746,
+      0.2731,
+      0.2733,
+      0.2748,
+      0.2741,
+      0.2733,
+      0.274,
+      0.2744,
+      0.2736,
+      0.2731,
+      0.2748,
+      0.2746,
+      0.2734,
+      0.2739,
+      0.2749,
+      0.2748,
+      0.2744,
+      0.2751,
+      0.2754,
+      0.2748,
+      0.275,
+      0.275,
+      0.2758,
+      0.2747,
+      0.2751,
+      0.2757,
+      0.2754,
+      0.2747,
+      0.2749,
+      0.277
+    ]
+  },
+  "artifact": {
+    "path": "/workspace/out/artifacts/latents.pt",
+    "size_mb": 0.127
+  }
+}
+[05:54:11] stage dit finished rc=0 in 19s
+[05:54:11] ---------- stage vae ----------
+
+########## stage: vae ##########
+/usr/local/lib/python3.12/dist-packages/huggingface_hub/constants.py:301: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.
+  warnings.warn(
+  [import] 3.483s
+  [load_latents] 0.005s
+  [load_cpu] 0.333s
+  [to_gpu] 0.090s
+  [decode] 0.287s
+/workspace/repo/qwen_image_21_sequential/run_stage.py:442: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  alpha_min = int(min(image.getchannel("A").getdata()))
+  [save] 0.139s
+
+=== metrics/vae.json ===
+{
+  "stage": "vae",
+  "latency_s": {
+    "import": 3.483,
+    "load_latents": 0.005,
+    "load_cpu": 0.333,
+    "to_gpu": 0.09,
+    "decode": 0.287,
+    "save": 0.139,
+    "total": 4.339
+  },
+  "gpu": {
+    "name": "NVIDIA GeForce RTX 3090",
+    "total_mb": 24124.2,
+    "peak_device_used_mb": 2977.1,
+    "torch_peak_allocated_mb": 2333.3,
+    "torch_peak_reserved_mb": 2660.0
+  },
+  "host": {
+    "peak_rss_mb": 1854.0,
+    "ru_maxrss_mb": 2719.4,
+    "total_ram_gb": 251.68
+  },
+  "vae": {
+    "class": "AutoencoderKLQwenImage21",
+    "params": 337740404,
+    "params_billions": 0.338,
+    "param_bytes_mb": 644.2,
+    "buffer_bytes_mb": 0.0,
+    "dtypes": [
+      "torch.bfloat16"
+    ]
+  },
+  "inputs": {
+    "packed_latents": {
+      "shape": [
+        1,
+        1024,
+        64
+      ],
+      "dtype": "torch.bfloat16",
+      "elements": 65536,
+      "bytes_mb": 0.125
+    },
+    "unpacked_latents": {
+      "shape": [
+        1,
+        64,
+        1,
+        32,
+        32
+      ],
+      "dtype": "torch.bfloat16",
+      "elements": 65536,
+      "bytes_mb": 0.125
+    }
+  },
+  "outputs": {
+    "decoded_tensor": {
+      "shape": [
+        1,
+        4,
+        512,
+        512
+      ],
+      "dtype": "torch.bfloat16",
+      "elements": 1048576,
+      "bytes_mb": 2.0
+    },
+    "image_mode": "RGBA",
+    "image_size": [
+      512,
+      512
+    ],
+    "alpha_min": 253
+  },
+  "artifact": {
+    "path": "/workspace/out/artifacts/image.png",
+    "size_mb": 0.308
+  },
+  "artifact_flat": {
+    "path": "/workspace/out/artifacts/image_rgb.png",
+    "size_mb": 0.27
+  },
+  "compression_ratio_latent_to_png": 0.406
+}
+[05:54:16] stage vae finished rc=0 in 5s
+[05:54:16] ---------- stage fit ----------
+
+########## stage: fit ##########
+/usr/local/lib/python3.12/dist-packages/huggingface_hub/constants.py:301: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.
+  warnings.warn(
+Loading pipeline components...:   0%|          | 0/5 [00:00<?, ?it/s]Loading pipeline components...:  20%|██        | 1/5 [00:00<00:01,  3.82it/s]
+Loading weights:   0%|          | 0/750 [00:00<?, ?it/s][ALoading weights: 100%|██████████| 750/750 [00:00<00:00, 10057.80it/s]
+Loading pipeline components...:  40%|████      | 2/5 [00:00<00:00,  3.97it/s]Loading pipeline components...:  60%|██████    | 3/5 [00:00<00:00,  3.25it/s]
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s][ALoading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 162.54it/s]
+Loading pipeline components...: 100%|██████████| 5/5 [00:00<00:00,  5.45it/s]
+  [load_cpu] 0.946s
+[W922 05:54:24.550053455 CUDACachingAllocator.cpp:3933] memory allocation failed with OOM on device 0 while trying to allocate 33554432 bytes (free: 11599872, total: 25296044032).
+[W922 05:54:24.550202094 CUDACachingAllocator.cpp:3933] memory allocation failed with OOM on device 0 while trying to allocate 33554432 bytes (free: 11599872, total: 25296044032).
+OOM: CUDA out of memory. Tried to allocate 32.00 MiB. GPU 0 has a total capacity of 23.56 GiB of which 11.06 MiB is free. Including non-PyTorch memory, this process has 23.54 GiB memory in use. Of the allocated memory 23.13 GiB is allocated by PyTorch, and 166.58 MiB is reserved by PyTorch but unallocate
+
+=== metrics/fit.json ===
+{
+  "stage": "fit",
+  "latency_s": {
+    "load_cpu": 0.946,
+    "total": 4.398
+  },
+  "gpu": {
+    "name": "NVIDIA GeForce RTX 3090",
+    "total_mb": 24124.2,
+    "peak_device_used_mb": 23313.1,
+    "torch_peak_allocated_mb": 23681.4,
+    "torch_peak_reserved_mb": 23848.0
+  },
+  "host": {
+    "peak_rss_mb": 7709.8,
+    "ru_maxrss_mb": 8530.3,
+    "total_ram_gb": 251.68
+  },
+  "oom": true,
+  "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 32.00 MiB. GPU 0 has a total capacity of 23.56 GiB of which 11.06 MiB is free. Including non-PyTorch memory, this process has 23.54 GiB memory in use. Of the allocated memory 23.13 GiB is allocated by PyTorch, and 166.58 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)"
+}
+[05:54:25] stage fit finished rc=0 in 9s
+[05:54:25] collecting metrics
+{
+  "dit": 17.626,
+  "env": null,
+  "fetch": 1249.499,
+  "fit": 4.398,
+  "vae": 4.339,
+  "vl": 7.941
+}
+total 5828
+-rw-r--r-- 1 root root  322566 Sep 22 05:54 image.png
+-rw-r--r-- 1 root root  283004 Sep 22 05:54 image_rgb.png
+-rw-r--r-- 1 root root  132649 Sep 22 05:54 latents.pt
+-rw-r--r-- 1 root root 5220949 Sep 22 05:53 prompt_embeds.pt
+[05:54:25] ALL DONE
+[boot] run_all.sh exited rc=0
