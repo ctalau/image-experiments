@@ -230,6 +230,39 @@ Caveat: the two runs differ in GPU, container image and host at once, so only th
 steady-state step time above should be read as a GPU-to-GPU result. The rest is a
 statement about how much of a short pipeline run is not the GPU.
 
+### Reproduction
+
+Re-ran the unmodified `deploy.py run --gpu "NVIDIA GeForce RTX 3090"` command on
+2026-09-22 against the same code, on a different community host. Results in
+[`results_3090_repro/`](results_3090_repro/).
+
+| | First run (`results_3090/`) | Reproduction (`results_3090_repro/`) |
+|---|---:|---:|
+| Pods needed | 1 | 1 |
+| Cost / wall | $0.07 / ~20 min | $0.11 / ~30 min |
+| Output image | — | **bit-for-bit identical** (`md5sum` matches on `image.png` and `image_rgb.png`) |
+| Control OOM | `Tried to allocate 32.00 MiB … 11.06 MiB free` | byte-for-byte the same error |
+| `vl` peak device used | 17 713 MB | 17 475 MB |
+| `dit` peak device used | 14 545 MB | 14 545 MB (identical) |
+| `vae` peak device used | 2 833 MB | 2 977 MB |
+| `fit` (control) peak device used | 22 609 MB | 23 313 MB |
+| DiT first / median step | 0.720 s / 0.283 s | 0.682 s / 0.275 s |
+| Checkpoint download | 296 s @ 106.6 MB/s | 1 250 s @ 25.3 MB/s |
+| Dependency install | 742 s | 145 s |
+
+Everything that is a property of the code and the card reproduced almost exactly:
+identical checkpoint sizes, identical DiT peak VRAM, per-step timing within 3%, and
+the same OOM on the control run. The rendered image came out **bit-for-bit
+identical** — same seed, same architecture, no randomness anywhere in the sequential
+path.
+
+The one real divergence is host-dependent, not GPU-dependent: this host's Hugging
+Face download bandwidth was 4.2× worse (25.3 vs 106.6 MB/s), which alone accounts for
+the wall time and roughly doubles the cost even though per-stage compute was, if
+anything, marginally faster. That is the report's own "the download dominates"
+finding showing up as run-to-run variance: on the community pool, host noise lands
+entirely in the parts of the run that are not the GPU.
+
 ## How it works
 
 `run_stage.py` runs one stage per invocation. The split relies on diffusers skipping any
